@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Centre - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body style="font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1729 100%); min-height: 100vh;">
+    
+    <script src="assets/js/auth.js"></script>
+    <script>requireAuth();</script>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+        <div style="margin-bottom: 2rem;">
+            <button onclick="window.location.href='index.html'" style="background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.3); color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </button>
+        </div>
+
+        <h1 style="color: white; font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Help Centre</h1>
+        <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 2rem;">Find answers to common questions and get support</p>
+
+        <!-- Search -->
+        <div style="margin-bottom: 2rem;">
+            <div style="position: relative;">
+                <input type="text" placeholder="Search for help..." style="width: 100%; padding: 1rem 1rem 1rem 3rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; font-size: 1rem;">
+                <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.5);"></i>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div onclick="toggleCard(this, 'getting-started')" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative;" onmouseover="this.style.transform='translateY(-5px)'; this.style.background='rgba(102, 126, 234, 0.1)'" onmouseout="if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'; if(!this.classList.contains('expanded')) this.style.background='rgba(255, 255, 255, 0.05)'">
+                <i class="fas fa-book" style="font-size: 2rem; color: #667eea; margin-bottom: 1rem;"></i>
+                <h3 style="color: white; font-weight: 600; margin-bottom: 0.5rem;">Getting Started <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.5rem; transition: transform 0.3s;"></i></h3>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Learn the basics of ForexCast</p>
+                <div id="getting-started" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); animation: slideDown 0.3s ease;">
+                    <ul style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #667eea;"></i>
+                            Create your account
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #667eea;"></i>
+                            Verify your email
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #667eea;"></i>
+                            Set up your profile
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #667eea;"></i>
+                            Add funds to your wallet
+                        </li>
+                        <li style="padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #667eea;"></i>
+                            Start trading!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div onclick="toggleCard(this, 'wallet-help')" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative;" onmouseover="this.style.transform='translateY(-5px)'; this.style.background='rgba(16, 185, 129, 0.1)'" onmouseout="if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'; if(!this.classList.contains('expanded')) this.style.background='rgba(255, 255, 255, 0.05)'">
+                <i class="fas fa-wallet" style="font-size: 2rem; color: #10b981; margin-bottom: 1rem;"></i>
+                <h3 style="color: white; font-weight: 600; margin-bottom: 0.5rem;">Wallet & Payments <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.5rem; transition: transform 0.3s;"></i></h3>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Manage your funds and transactions</p>
+                <div id="wallet-help" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); animation: slideDown 0.3s ease;">
+                    <ul style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-arrow-right" style="position: absolute; left: 0; color: #10b981;"></i>
+                            Add funds via bank transfer or card
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-arrow-right" style="position: absolute; left: 0; color: #10b981;"></i>
+                            Send money to other users
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-arrow-right" style="position: absolute; left: 0; color: #10b981;"></i>
+                            Request payments
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-arrow-right" style="position: absolute; left: 0; color: #10b981;"></i>
+                            Withdraw to your bank account
+                        </li>
+                        <li style="padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-arrow-right" style="position: absolute; left: 0; color: #10b981;"></i>
+                            View transaction history
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div onclick="toggleCard(this, 'security-help')" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative;" onmouseover="this.style.transform='translateY(-5px)'; this.style.background='rgba(245, 158, 11, 0.1)'" onmouseout="if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'; if(!this.classList.contains('expanded')) this.style.background='rgba(255, 255, 255, 0.05)'">
+                <i class="fas fa-shield-alt" style="font-size: 2rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                <h3 style="color: white; font-weight: 600; margin-bottom: 0.5rem;">Security <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.5rem; transition: transform 0.3s;"></i></h3>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Keep your account safe</p>
+                <div id="security-help" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); animation: slideDown 0.3s ease;">
+                    <ul style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-shield-alt" style="position: absolute; left: 0; color: #f59e0b;"></i>
+                            Enable Two-Factor Authentication
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-shield-alt" style="position: absolute; left: 0; color: #f59e0b;"></i>
+                            Use a strong, unique password
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-shield-alt" style="position: absolute; left: 0; color: #f59e0b;"></i>
+                            Review active sessions regularly
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-shield-alt" style="position: absolute; left: 0; color: #f59e0b;"></i>
+                            Never share your credentials
+                        </li>
+                        <li style="padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-shield-alt" style="position: absolute; left: 0; color: #f59e0b;"></i>
+                            Enable email notifications
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div onclick="toggleCard(this, 'trading-help')" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; position: relative;" onmouseover="this.style.transform='translateY(-5px)'; this.style.background='rgba(139, 92, 246, 0.1)'" onmouseout="if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'; if(!this.classList.contains('expanded')) this.style.background='rgba(255, 255, 255, 0.05)'">
+                <i class="fas fa-chart-line" style="font-size: 2rem; color: #8b5cf6; margin-bottom: 1rem;"></i>
+                <h3 style="color: white; font-weight: 600; margin-bottom: 0.5rem;">Trading <i class="fas fa-chevron-down" style="font-size: 0.75rem; margin-left: 0.5rem; transition: transform 0.3s;"></i></h3>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Learn about forex trading</p>
+                <div id="trading-help" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); animation: slideDown 0.3s ease;">
+                    <ul style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-chart-line" style="position: absolute; left: 0; color: #8b5cf6;"></i>
+                            View real-time exchange rates
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-chart-line" style="position: absolute; left: 0; color: #8b5cf6;"></i>
+                            Use our ML-powered predictions
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-chart-line" style="position: absolute; left: 0; color: #8b5cf6;"></i>
+                            Set up price alerts
+                        </li>
+                        <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-chart-line" style="position: absolute; left: 0; color: #8b5cf6;"></i>
+                            Track your portfolio
+                        </li>
+                        <li style="padding-left: 1.5rem; position: relative;">
+                            <i class="fas fa-chart-line" style="position: absolute; left: 0; color: #8b5cf6;"></i>
+                            Access market news and analysis
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQs -->
+        <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: white; font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+            
+            <details style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; cursor: pointer;">
+                <summary style="color: white; font-weight: 500; cursor: pointer;">How do I add funds to my wallet?</summary>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 0.75rem; font-size: 0.875rem;">Go to My Wallet, click on "Top Up" in Quick Actions, select your payment method, and enter the amount you want to add.</p>
+            </details>
+
+            <details style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; cursor: pointer;">
+                <summary style="color: white; font-weight: 500; cursor: pointer;">How do I enable two-factor authentication?</summary>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 0.75rem; font-size: 0.875rem;">Navigate to Security settings, find the Two-Factor Authentication section, and click "Enable". Follow the on-screen instructions to complete the setup.</p>
+            </details>
+
+            <details style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; cursor: pointer;">
+                <summary style="color: white; font-weight: 500; cursor: pointer;">What currencies can I trade?</summary>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 0.75rem; font-size: 0.875rem;">ForexCast supports major currency pairs including USD, EUR, GBP, JPY, CHF, CAD, AUD, and more. Check the Converter page for the full list.</p>
+            </details>
+
+            <details style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; cursor: pointer;">
+                <summary style="color: white; font-weight: 500; cursor: pointer;">How accurate are the ML predictions?</summary>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 0.75rem; font-size: 0.875rem;">Our LSTM neural network model has an accuracy rate of approximately 89.5%. However, forex markets are volatile and predictions should be used as guidance, not guarantees.</p>
+            </details>
+
+            <details style="padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; cursor: pointer;">
+                <summary style="color: white; font-weight: 500; cursor: pointer;">How do I withdraw funds?</summary>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 0.75rem; font-size: 0.875rem;">Go to My Wallet, click "Withdraw" in Quick Actions, select your destination account, enter the amount, and submit. Withdrawals typically process within 1-2 business days.</p>
+            </details>
+        </div>
+
+        <!-- Contact Support -->
+        <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+            <h2 style="color: white; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Still need help?</h2>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">Our support team is here to help you 24/7</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                
+                <!-- Email Support Button -->
+                <div onclick="toggleSupportCard(this, 'email-support')" style="padding: 1rem; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); position: relative;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.4)'" onmouseout="if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'; if(!this.classList.contains('expanded')) this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.3)'">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email Support</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                    </div>
+                    <div id="email-support" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.2); width: 100%; text-align: center;">
+                        <p style="font-size: 0.875rem; margin-bottom: 1rem; font-weight: normal;">Send us an email and we'll respond within 24 hours</p>
+                        <p style="font-size: 1rem; margin-bottom: 1rem;">📧 <strong>support@forexcast.com</strong></p>
+                        <button onclick="event.stopPropagation(); window.location.href='mailto:support@forexcast.com'" style="padding: 0.5rem 1rem; background: white; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            Send Email
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Live Chat Button -->
+                <div onclick="toggleSupportCard(this, 'live-chat')" style="padding: 1rem; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; color: #10b981; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; position: relative;" onmouseover="this.style.background='rgba(16, 185, 129, 0.3)'; this.style.transform='translateY(-3px)'" onmouseout="if(!this.classList.contains('expanded')) this.style.background='rgba(16, 185, 129, 0.2)'; if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-comments"></i>
+                        <span>Live Chat</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                    </div>
+                    <div id="live-chat" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(16, 185, 129, 0.3); width: 100%; text-align: center;">
+                        <p style="font-size: 0.875rem; margin-bottom: 1rem; font-weight: normal; color: rgba(255, 255, 255, 0.8);">Live chat feature coming soon!</p>
+                        <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); font-weight: normal;">For immediate assistance:</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem; color: rgba(255, 255, 255, 0.8); font-weight: normal;">📧 support@forexcast.com<br>📞 +1 (800) 123-4567</p>
+                    </div>
+                </div>
+                
+                <!-- Call Us Button -->
+                <div onclick="toggleSupportCard(this, 'call-us')" style="padding: 1rem; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; color: #3b82f6; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s; position: relative;" onmouseover="this.style.background='rgba(59, 130, 246, 0.3)'; this.style.transform='translateY(-3px)'" onmouseout="if(!this.classList.contains('expanded')) this.style.background='rgba(59, 130, 246, 0.2)'; if(!this.classList.contains('expanded')) this.style.transform='translateY(0)'">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-phone"></i>
+                        <span>Call Us</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                    </div>
+                    <div id="call-us" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(59, 130, 246, 0.3); width: 100%; text-align: center;">
+                        <p style="font-size: 1.125rem; margin-bottom: 0.5rem; color: white;">📞 <strong>+1 (800) 123-4567</strong></p>
+                        <p style="font-size: 0.875rem; margin-bottom: 1rem; color: rgba(255, 255, 255, 0.7); font-weight: normal;">Available 24/7<br>Average wait time: 2 minutes</p>
+                        <button onclick="event.stopPropagation(); window.location.href='tel:+18001234567'" style="padding: 0.5rem 1rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            <i class="fas fa-phone"></i> Call Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/chatbot.js"></script>
+    
+    <script>
+        // Toggle Support Card Expansion
+        function toggleSupportCard(card, contentId) {
+            const content = document.getElementById(contentId);
+            const chevron = card.querySelector('.fa-chevron-down');
+            const allSupportCards = document.querySelectorAll('[onclick*="toggleSupportCard"]');
+            
+            // Close all other support cards
+            allSupportCards.forEach(c => {
+                if (c !== card) {
+                    const otherId = c.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    const otherContent = document.getElementById(otherId);
+                    const otherChevron = c.querySelector('.fa-chevron-down');
+                    if (otherContent) {
+                        otherContent.style.display = 'none';
+                    }
+                    if (otherChevron) {
+                        otherChevron.style.transform = 'rotate(0deg)';
+                    }
+                    c.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current card
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                card.classList.add('expanded');
+                if (chevron) {
+                    chevron.style.transform = 'rotate(180deg)';
+                }
+            } else {
+                content.style.display = 'none';
+                card.classList.remove('expanded');
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+        
+        // Toggle Card Expansion
+        function toggleCard(card, contentId) {
+            const content = document.getElementById(contentId);
+            const chevron = card.querySelector('.fa-chevron-down');
+            const allCards = document.querySelectorAll('[onclick*="toggleCard"]');
+            
+            // Close all other cards
+            allCards.forEach(c => {
+                if (c !== card) {
+                    const otherId = c.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    const otherContent = document.getElementById(otherId);
+                    const otherChevron = c.querySelector('.fa-chevron-down');
+                    if (otherContent) {
+                        otherContent.style.display = 'none';
+                    }
+                    if (otherChevron) {
+                        otherChevron.style.transform = 'rotate(0deg)';
+                    }
+                    c.classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current card
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                card.classList.add('expanded');
+                card.style.transform = 'translateY(-5px)';
+                if (chevron) {
+                    chevron.style.transform = 'rotate(180deg)';
+                }
+            } else {
+                content.style.display = 'none';
+                card.classList.remove('expanded');
+                card.style.transform = 'translateY(0)';
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+        
+        // Make FAQ items change background when opened
+        document.querySelectorAll('details').forEach(detail => {
+            detail.addEventListener('toggle', function() {
+                if (this.open) {
+                    this.style.background = 'rgba(102, 126, 234, 0.1)';
+                } else {
+                    this.style.background = 'rgba(255, 255, 255, 0.03)';
+                }
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('input[placeholder="Search for help..."]');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        alert('Searching for: "' + query + '"\n\nResults would appear here in a full implementation.');
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

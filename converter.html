@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Currency Converter - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+    <style>
+        /* Currency Note Animation - Premium Forex Style */
+        .currency-note-container {
+            perspective: 2500px;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            position: relative;
+        }
+
+        .currency-note {
+            position: relative;
+            width: 450px;
+            height: 220px;
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: floatNote 3s ease-in-out infinite;
+        }
+
+        /* Floating animation */
+        @keyframes floatNote {
+            0%, 100% {
+                transform: translateY(0px) rotateX(2deg);
+            }
+            50% {
+                transform: translateY(-10px) rotateX(-2deg);
+            }
+        }
+
+        /* Realistic note image */
+        .note-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.6),
+                0 10px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+            backface-visibility: visible;
+        }
+
+        /* Currency change animation - fade and slide */
+        .currency-note.changing .note-image {
+            animation: currencyChange 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes currencyChange {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1) rotateY(0deg);
+            }
+            50% {
+                opacity: 0;
+                transform: translateX(-50px) scale(0.9) rotateY(-90deg);
+            }
+            51% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.9) rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1) rotateY(0deg);
+            }
+        }
+
+        /* Swap flip animation - horizontal flip like real cash */
+        .currency-note.flipping {
+            animation: realMoneyFlip 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes realMoneyFlip {
+            0% {
+                transform: translateY(0) translateZ(0) rotateY(0deg) rotateX(0deg) scale(1);
+            }
+            15% {
+                transform: translateY(-35px) translateZ(20px) rotateY(0deg) rotateX(-5deg) scale(1.02);
+            }
+            25% {
+                transform: translateY(-50px) translateZ(40px) rotateY(45deg) rotateX(-8deg) scale(1.05);
+            }
+            40% {
+                transform: translateY(-60px) translateZ(50px) rotateY(90deg) rotateX(-10deg) scale(1.08);
+            }
+            50% {
+                transform: translateY(-65px) translateZ(55px) rotateY(135deg) rotateX(-10deg) scale(1.08);
+            }
+            60% {
+                transform: translateY(-60px) translateZ(50px) rotateY(180deg) rotateX(-8deg) scale(1.05);
+            }
+            75% {
+                transform: translateY(-40px) translateZ(30px) rotateY(180deg) rotateX(-5deg) scale(1.02);
+            }
+            85% {
+                transform: translateY(-10px) translateZ(10px) rotateY(180deg) rotateX(-2deg) scale(1);
+            }
+            92% {
+                transform: translateY(5px) translateZ(0) rotateY(180deg) rotateX(2deg) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) translateZ(0) rotateY(180deg) rotateX(0deg) scale(1);
+            }
+        }
+
+        /* Country-based glow effects */
+        .currency-note.glow-usd::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(133, 187, 101, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .currency-note.glow-eur::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .currency-note.glow-gbp::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(155, 89, 182, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .currency-note.glow-jpy::after,
+        .currency-note.glow-cny::after,
+        .currency-note.glow-cad::after,
+        .currency-note.glow-chf::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(231, 76, 60, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .currency-note.glow-aud::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .currency-note.glow-inr::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(255, 153, 51, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Dynamic shadow during flip */
+        .currency-note::before {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 40px;
+            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .currency-note.flipping::before {
+            animation: shadowFlip 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes shadowFlip {
+            0%, 100% {
+                width: 80%;
+                opacity: 0.6;
+                filter: blur(15px);
+            }
+            50% {
+                width: 40%;
+                opacity: 0.3;
+                filter: blur(25px);
+            }
+        }
+
+        /* Motion blur effect during flip */
+        .currency-note.flipping .note-image {
+            animation: motionBlur 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes motionBlur {
+            0%, 100% {
+                filter: blur(0px) brightness(1);
+            }
+            25%, 75% {
+                filter: blur(1.5px) brightness(1.1);
+            }
+            50% {
+                filter: blur(3px) brightness(1.2);
+            }
+        }
+
+        /* Glow effect during flip */
+        .currency-note.flipping::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.5) 0%, rgba(118, 75, 162, 0.3) 40%, transparent 70%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            animation: glowPulse 1.4s ease-out;
+            pointer-events: none;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            50% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        /* Hover effect */
+        .currency-note:not(.flipping):hover {
+            transform: translateY(-8px) rotateX(5deg);
+        }
+
+        .currency-note:not(.flipping):hover .note-image {
+            box-shadow: 
+                0 35px 70px rgba(0, 0, 0, 0.7),
+                0 15px 30px rgba(0, 0, 0, 0.5),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .currency-note {
+                width: 340px;
+                height: 170px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .currency-note {
+                width: 300px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-dark">
+    <div class="animated-bg"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar glass-card">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-chart-line text-3xl text-accent-blue"></i>
+                <h1 class="text-xl font-bold text-white">ForexCast</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="forecast.html" class="nav-link">Forecast</a>
+                <a href="news.html" class="nav-link">News</a>
+                <a href="geo-alerts.html" class="nav-link">Geo Alerts</a>
+                <a href="converter.html" class="nav-link active">Converter</a>
+                <a href="alerts.html" class="nav-link">Alerts</a>
+            </div>
+            <button class="hamburger md:hidden" id="hamburger">
+                <i class="fas fa-bars text-white text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-link">Dashboard</a>
+        <a href="forecast.html" class="mobile-link">Forecast</a>
+        <a href="news.html" class="mobile-link">News</a>
+        <a href="geo-alerts.html" class="mobile-link">Geo Alerts</a>
+        <a href="converter.html" class="mobile-link active">Converter</a>
+        <a href="alerts.html" class="mobile-link">Alerts</a>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-3">Currency Converter</h1>
+                <p class="text-gray-400">Real-time exchange rates with premium animations</p>
+            </div>
+
+            <!-- Currency Note Display - Realistic Money Flip -->
+            <div class="currency-note-container" id="noteContainer">
+                <div class="currency-note glow-usd" id="currencyNote">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='450' height='220'%3E%3Cdefs%3E%3ClinearGradient id='usd-g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2385bb65'/%3E%3Cstop offset='100%25' style='stop-color:%236b9e54'/%3E%3C/linearGradient%3E%3Cpattern id='usd-p' x='0' y='0' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='20' cy='20' r='1.5' fill='rgba(255,255,255,0.15)'/%3E%3C/pattern%3E%3CradialGradient id='usd-portrait'%3E%3Cstop offset='0%25' style='stop-color:%23ffffff;stop-opacity:0.3'/%3E%3Cstop offset='100%25' style='stop-color:%23ffffff;stop-opacity:0.05'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='450' height='220' fill='url(%23usd-g)' rx='16'/%3E%3Crect width='450' height='220' fill='url(%23usd-p)'/%3E%3Ccircle cx='100' cy='110' r='55' fill='url(%23usd-portrait)' stroke='rgba(255,255,255,0.4)' stroke-width='3'/%3E%3Ctext x='100' y='120' font-family='Georgia,serif' font-size='45' font-weight='bold' fill='%23ffffff' text-anchor='middle' opacity='0.7'%3EB%3C/text%3E%3Crect x='12' y='12' width='426' height='196' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='3' rx='12'/%3E%3Ctext x='280' y='85' font-family='Georgia,serif' font-size='95' font-weight='bold' fill='%23ffffff' text-anchor='middle' opacity='0.95'%3E$%3C/text%3E%3Ctext x='280' y='155' font-family='Arial' font-size='32' font-weight='700' fill='%23ffffff' text-anchor='middle' opacity='0.9'%3E100 DOLLARS%3C/text%3E%3Ctext x='35' y='45' font-family='Arial' font-size='20' font-weight='bold' fill='%23ffffff' opacity='0.85'%3EUNITED STATES%3C/text%3E%3Ctext x='415' y='200' font-family='Arial' font-size='18' fill='%23ffffff' text-anchor='end' opacity='0.75'%3EUSA%3C/text%3E%3Ctext x='280' y='35' font-family='Arial' font-size='14' fill='%23ffffff' text-anchor='middle' opacity='0.6'%3EFEDERAL RESERVE NOTE%3C/text%3E%3C/svg%3E" alt="USD Currency Note" id="noteImage" class="note-image">
+                </div>
+            </div>
+
+            <!-- Converter Card Container -->
+            <div class="converter-scene">
+                <div class="converter-card" id="converterCard">
+                    <!-- Front Side -->
+                    <div class="converter-face converter-front">
+                        <div class="currency-watermark" id="watermarkFront">$</div>
+                        
+                        <!-- From Currency -->
+                        <div class="currency-section">
+                            <label class="currency-label">From</label>
+                            <div class="currency-input-group">
+                                <div class="currency-flag" id="fromFlag">🇺🇸</div>
+                                <input 
+                                    type="number" 
+                                    id="fromAmount" 
+                                    class="currency-input" 
+                                    value="100"
+                                    placeholder="0.00"
+                                >
+                                <select id="fromCurrency" class="currency-select">
+                                    <option value="USD" selected>USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Swap Button -->
+                        <div class="swap-button-container">
+                            <button class="swap-button" id="swapButton">
+                                <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </div>
+
+                        <!-- To Currency -->
+                        <div class="currency-section">
+                            <label class="currency-label">To</label>
+                            <div class="currency-input-group">
+                                <div class="currency-flag" id="toFlag">🇪🇺</div>
+                                <input 
+                                    type="number" 
+                                    id="toAmount" 
+                                    class="currency-input" 
+                                    value="92"
+                                    placeholder="0.00"
+                                    readonly
+                                >
+                                <select id="toCurrency" class="currency-select">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR" selected>EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Exchange Rate Info -->
+                        <div class="exchange-rate-info">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400 text-sm">Exchange Rate</span>
+                                <span class="text-white font-semibold" id="exchangeRate">1 USD = 0.92 EUR</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-gray-400 text-sm">Last Updated</span>
+                                <span class="text-accent-green text-sm" id="lastUpdated">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back Side (for flip animation) -->
+                    <div class="converter-face converter-back">
+                        <div class="currency-watermark" id="watermarkBack">€</div>
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <i class="fas fa-sync-alt text-6xl text-accent-blue mb-4 animate-spin"></i>
+                                <p class="text-white text-xl font-semibold">Swapping Currencies...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Convert Buttons -->
+            <div class="grid grid-cols-3 gap-3 mt-6">
+                <button class="quick-convert-btn" data-amount="100">
+                    <span class="text-2xl font-bold">100</span>
+                </button>
+                <button class="quick-convert-btn" data-amount="500">
+                    <span class="text-2xl font-bold">500</span>
+                </button>
+                <button class="quick-convert-btn" data-amount="1000">
+                    <span class="text-2xl font-bold">1K</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particle Container for Burst Effect -->
+    <div id="particleContainer"></div>
+
+    <style>
+        /* Converter Scene & 3D Setup */
+        .converter-scene {
+            perspective: 1500px;
+            margin: 0 auto;
+        }
+
+        .converter-card {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .converter-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .converter-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .converter-front {
+            transform: rotateY(0deg);
+        }
+
+        .converter-back {
+            transform: rotateY(180deg);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        /* Dynamic Currency Watermark */
+        .currency-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 0;
+            transition: all 0.5s ease;
+        }
+
+        /* Currency Section */
+        .currency-section {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 2rem;
+        }
+
+        .currency-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .currency-input-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .currency-input-group:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .currency-flag {
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .currency-flag.swapping {
+            animation: flagSwap 0.6s ease;
+        }
+
+        @keyframes flagSwap {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(0.5) rotate(180deg); opacity: 0.3; }
+        }
+
+        .currency-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .currency-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .currency-select {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .currency-select:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+
+        .currency-select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Swap Button */
+        .swap-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .swap-button {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swap-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .swap-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .swap-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .swap-button.rotating {
+            animation: rotate360 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes rotate360 {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+
+        .swap-button.glowing {
+            animation: glow 0.6s ease;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(102, 126, 234, 1), 0 0 100px rgba(102, 126, 234, 0.6); }
+        }
+
+        /* Exchange Rate Info */
+        .exchange-rate-info {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        /* Quick Convert Buttons */
+        .quick-convert-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-convert-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-4px);
+        }
+
+        /* Value Animation */
+        .value-animating {
+            animation: valueChange 0.6s ease;
+        }
+
+        @keyframes valueChange {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Particle Effect */
+        .particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: particleBurst 0.8s ease-out forwards;
+        }
+
+        @keyframes particleBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Theme Backgrounds */
+        .theme-usd {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+        }
+
+        .theme-eur {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.2) 0%, rgba(30, 64, 175, 0.1) 100%);
+        }
+
+        .theme-gbp {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(109, 40, 217, 0.1) 100%);
+        }
+
+        .theme-jpy {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%);
+        }
+
+        .theme-chf {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .theme-cad {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .theme-aud {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
+        }
+
+        .theme-cny {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%);
+        }
+
+        .theme-inr {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .converter-card {
+                height: 550px;
+            }
+
+            .converter-face {
+                padding: 1.5rem;
+            }
+
+            .currency-watermark {
+                font-size: 12rem;
+            }
+
+            .currency-input {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+
+    <script src="assets/js/config.js?v=4.0"></script>
+    <script src="assets/js/api.js?v=4.0"></script>
+    <script src="assets/js/chatbot.js?v=4.0"></script>
+    <script src="assets/js/converter.js?v=4.0"></script>
+    <script src="assets/js/main.js?v=4.0"></script>
+</body>
+</html>

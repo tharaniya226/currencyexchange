@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body style="font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1729 100%); min-height: 100vh;">
+    
+    <script src="assets/js/auth.js"></script>
+    <script>requireAuth();</script>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+        <div style="margin-bottom: 2rem;">
+            <button onclick="window.location.href='index.html'" style="background: rgba(102, 126, 234, 0.2); border: 1px solid rgba(102, 126, 234, 0.3); color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </button>
+        </div>
+
+        <h1 style="color: white; font-size: 2.5rem; font-weight: bold; margin-bottom: 2rem;">Security</h1>
+
+        <div style="display: grid; gap: 1.5rem;">
+            <!-- Change Password -->
+            <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+                <h3 style="color: white; font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Change Password</h3>
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; display: block; margin-bottom: 0.5rem;">Current Password</label>
+                    <input type="password" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; display: block; margin-bottom: 0.5rem;">New Password</label>
+                    <input type="password" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; display: block; margin-bottom: 0.5rem;">Confirm New Password</label>
+                    <input type="password" style="width: 100%; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white;">
+                </div>
+                <button id="updatePasswordBtn" style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer;">
+                    Update Password
+                </button>
+            </div>
+
+            <!-- Two-Factor Authentication -->
+            <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+                <h3 style="color: white; font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Two-Factor Authentication</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <div style="color: white; font-weight: 500;">Enable 2FA</div>
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem;">Add an extra layer of security to your account</div>
+                    </div>
+                    <button id="enable2FABtn" style="padding: 0.5rem 1.5rem; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                        Enable
+                    </button>
+                </div>
+                <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-shield-alt" style="color: #10b981;"></i>
+                        <span style="color: #10b981; font-size: 0.875rem;">Recommended for enhanced security</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Sessions -->
+            <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+                <h3 style="color: white; font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Active Sessions</h3>
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                        <div>
+                            <div style="color: white; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-desktop" style="color: #667eea;"></i>
+                                Windows PC - Chrome
+                            </div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.25rem;">New York, USA</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; margin-top: 0.25rem;">Last active: Just now</div>
+                        </div>
+                        <span style="padding: 0.25rem 0.75rem; background: rgba(16, 185, 129, 0.2); border-radius: 12px; color: #10b981; font-size: 0.75rem;">Current</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="color: white; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-mobile-alt" style="color: #667eea;"></i>
+                                iPhone 13 - Safari
+                            </div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.875rem; margin-top: 0.25rem;">New York, USA</div>
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; margin-top: 0.25rem;">Last active: 2 hours ago</div>
+                        </div>
+                        <button style="padding: 0.25rem 0.75rem; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #ef4444; font-size: 0.75rem; cursor: pointer;">
+                            Revoke
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login History -->
+            <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+                <h3 style="color: white; font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Recent Login Activity</h3>
+                <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px; display: flex; justify-content: space-between;">
+                    <div>
+                        <div style="color: white; font-size: 0.875rem;">Successful login</div>
+                        <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">New York, USA</div>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.75rem;">Today, 10:30 AM</div>
+                </div>
+                <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px; display: flex; justify-content: space-between;">
+                    <div>
+                        <div style="color: white; font-size: 0.875rem;">Successful login</div>
+                        <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">New York, USA</div>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.75rem;">Yesterday, 3:45 PM</div>
+                </div>
+                <div style="padding: 0.75rem; background: rgba(255, 255, 255, 0.03); border-radius: 8px; display: flex; justify-content: space-between;">
+                    <div>
+                        <div style="color: white; font-size: 0.875rem;">Successful login</div>
+                        <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem;">Los Angeles, USA</div>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.75rem;">2 days ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/chatbot.js"></script>
+    
+    <script>
+        // Toast Notification Function
+        function showToast(message, type = 'success') {
+            const existingToast = document.getElementById('toast-notification');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.style.cssText = `
+                position: fixed;
+                top: -100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #dc2626)'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: top 0.4s ease;
+            `;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = `<i class="fas ${icon}" style="font-size: 1.25rem;"></i><span>${message}</span>`;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.top = '20px'; }, 10);
+            setTimeout(() => {
+                toast.style.top = '-100px';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Security page loaded');
+            
+            // Change Password Button
+            const updatePasswordBtn = document.getElementById('updatePasswordBtn');
+            
+            if (updatePasswordBtn) {
+                updatePasswordBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const passwordInputs = document.querySelectorAll('input[type="password"]');
+                    const currentPassword = passwordInputs[0] ? passwordInputs[0].value : '';
+                    const newPassword = passwordInputs[1] ? passwordInputs[1].value : '';
+                    const confirmPassword = passwordInputs[2] ? passwordInputs[2].value : '';
+                    
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        showToast('Please fill in all password fields', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        showToast('New passwords do not match!', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 8) {
+                        showToast('Password must be at least 8 characters long', 'error');
+                        return;
+                    }
+                    
+                    localStorage.setItem('forexcast_password_updated', new Date().toISOString());
+                    passwordInputs.forEach(input => input.value = '');
+                    showToast('Password updated successfully!', 'success');
+                });
+            }
+            
+            // Enable 2FA Button
+            const enable2FABtn = document.getElementById('enable2FABtn');
+            let twoFAEnabled = localStorage.getItem('forexcast_2fa_enabled') === 'true';
+            
+            if (enable2FABtn) {
+                if (twoFAEnabled) {
+                    enable2FABtn.textContent = 'Disable';
+                    enable2FABtn.style.background = 'rgba(239, 68, 68, 0.2)';
+                    enable2FABtn.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    enable2FABtn.style.color = '#ef4444';
+                }
+                
+                enable2FABtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (twoFAEnabled) {
+                        if (confirm('Are you sure you want to disable Two-Factor Authentication?')) {
+                            twoFAEnabled = false;
+                            localStorage.setItem('forexcast_2fa_enabled', 'false');
+                            this.textContent = 'Enable';
+                            this.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                            this.style.border = 'none';
+                            this.style.color = 'white';
+                            showToast('Two-Factor Authentication disabled', 'success');
+                        }
+                    } else {
+                        twoFAEnabled = true;
+                        localStorage.setItem('forexcast_2fa_enabled', 'true');
+                        this.textContent = 'Disable';
+                        this.style.background = 'rgba(239, 68, 68, 0.2)';
+                        this.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                        this.style.color = '#ef4444';
+                        showToast('Two-Factor Authentication enabled!', 'success');
+                    }
+                });
+            }
+            
+            // Revoke Session Buttons
+            document.querySelectorAll('button').forEach(btn => {
+                if (btn.textContent.includes('Revoke')) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        if (confirm('Are you sure you want to revoke this session?')) {
+                            const sessionDiv = this.closest('div[style*="padding: 1rem"]');
+                            sessionDiv.style.opacity = '0.5';
+                            this.textContent = 'Revoked';
+                            this.style.background = 'rgba(107, 114, 128, 0.2)';
+                            this.style.color = '#6b7280';
+                            this.disabled = true;
+                            this.style.cursor = 'not-allowed';
+                            
+                            showToast('Session revoked successfully', 'success');
+                            
+                            setTimeout(() => {
+                                sessionDiv.style.display = 'none';
+                            }, 1000);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo-Triggered Alerts - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-gradient-dark">
+    <div class="animated-bg"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar glass-card">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-chart-line text-3xl text-accent-blue"></i>
+                <h1 class="text-xl font-bold text-white">ForexCast</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="forecast.html" class="nav-link">Forecast</a>
+                <a href="converter.html" class="nav-link">Converter</a>
+                <a href="news.html" class="nav-link">News</a>
+                <a href="geo-alerts.html" class="nav-link active">Geo Alerts</a>
+                <a href="alerts.html" class="nav-link">Alerts</a>
+            </div>
+            <button class="hamburger md:hidden" id="hamburger">
+                <i class="fas fa-bars text-white text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-link">Dashboard</a>
+        <a href="forecast.html" class="mobile-link">Forecast</a>
+        <a href="converter.html" class="mobile-link">Converter</a>
+        <a href="news.html" class="mobile-link">News</a>
+        <a href="geo-alerts.html" class="mobile-link active">Geo Alerts</a>
+        <a href="alerts.html" class="mobile-link">Alerts</a>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Geo-Triggered Alerts</h1>
+                <p class="text-gray-400">Real-time global events affecting currency markets</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="glass-card px-4 py-2">
+                    <span class="text-sm text-gray-400">Active Events:</span>
+                    <span class="text-xl font-bold text-accent-green ml-2" id="activeEventsCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="glass-card p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="section-title">Global Risk Map</h2>
+                <div class="flex items-center space-x-2">
+                    <button id="resetMapBtn" class="px-4 py-2 bg-white bg-opacity-10 hover:bg-opacity-20 text-white rounded-lg transition-all text-sm">
+                        <i class="fas fa-sync-alt mr-2"></i>Reset View
+                    </button>
+                </div>
+            </div>
+            <div id="map" class="w-full h-[500px] rounded-lg overflow-hidden border-2 border-gray-700"></div>
+            
+            <!-- Map Legend -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 rounded-full bg-red-500"></div>
+                    <span class="text-sm text-gray-400">High Risk</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 rounded-full bg-yellow-500"></div>
+                    <span class="text-sm text-gray-400">Medium Risk</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                    <span class="text-sm text-gray-400">Policy Change</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-4 h-4 rounded-full bg-green-500"></div>
+                    <span class="text-sm text-gray-400">Positive News</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Active Alerts -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6">
+                    <h2 class="section-title mb-6">Active Geo Alerts</h2>
+                    <div id="alertsList" class="space-y-4">
+                        <!-- Alerts will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Statistics -->
+            <div class="space-y-6">
+                <!-- Risk Summary -->
+                <div class="glass-card p-6">
+                    <h2 class="section-title mb-6">Risk Summary</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
+                                <span class="text-gray-400">High Risk</span>
+                            </div>
+                            <span class="text-white font-bold" id="highRiskCount">0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-circle text-yellow-400 text-xl"></i>
+                                <span class="text-gray-400">Medium Risk</span>
+                            </div>
+                            <span class="text-white font-bold" id="mediumRiskCount">0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-info-circle text-blue-400 text-xl"></i>
+                                <span class="text-gray-400">Policy Changes</span>
+                            </div>
+                            <span class="text-white font-bold" id="policyCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Affected Currencies -->
+                <div class="glass-card p-6">
+                    <h2 class="section-title mb-6">Affected Currencies</h2>
+                    <div id="affectedCurrencies" class="space-y-3">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .geo-alert-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: slideIn 0.4s ease;
+        }
+
+        .geo-alert-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .geo-alert-card.high-risk {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .geo-alert-card.medium-risk {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+        }
+
+        .geo-alert-card.policy {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .geo-alert-card.positive {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-marker {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        .pulse-marker {
+            animation: pulse-marker 2s infinite;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            border-radius: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .leaflet-popup-content {
+            margin: 1rem;
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .currency-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+
+        .flash-animation {
+            animation: flash 0.5s ease-in-out 3;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([20, 0], 2);
+
+        // Add dark theme tile layer
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Country coordinates and data
+        const countries = {
+            'USA': { coords: [37.0902, -95.7129], currency: 'USD', region: 'North America' },
+            'UK': { coords: [55.3781, -3.4360], currency: 'GBP', region: 'Europe' },
+            'Germany': { coords: [51.1657, 10.4515], currency: 'EUR', region: 'Europe' },
+            'France': { coords: [46.2276, 2.2137], currency: 'EUR', region: 'Europe' },
+            'Japan': { coords: [36.2048, 138.2529], currency: 'JPY', region: 'Asia' },
+            'China': { coords: [35.8617, 104.1954], currency: 'CNY', region: 'Asia' },
+            'India': { coords: [20.5937, 78.9629], currency: 'INR', region: 'Asia' },
+            'Russia': { coords: [61.5240, 105.3188], currency: 'RUB', region: 'Europe' },
+            'Brazil': { coords: [-14.2350, -51.9253], currency: 'BRL', region: 'South America' },
+            'Australia': { coords: [-25.2744, 133.7751], currency: 'AUD', region: 'Oceania' }
+        };
+
+        // Event types
+        const eventTypes = {
+            'interest_rate': { icon: 'fa-percentage', color: '#3b82f6', label: 'Interest Rate Change' },
+            'inflation': { icon: 'fa-arrow-trend-up', color: '#eab308', label: 'Inflation Spike' },
+            'political': { icon: 'fa-landmark', color: '#ef4444', label: 'Political Unrest' },
+            'war': { icon: 'fa-bomb', color: '#dc2626', label: 'War/Conflict' },
+            'policy': { icon: 'fa-gavel', color: '#3b82f6', label: 'Policy Change' },
+            'positive': { icon: 'fa-arrow-up', color: '#10b981', label: 'Positive Development' }
+        };
+
+        // Sample events (simulated real-time data)
+        let geoEvents = [
+            {
+                id: 1,
+                country: 'USA',
+                type: 'interest_rate',
+                severity: 'medium',
+                title: 'Federal Reserve Rate Hike',
+                description: 'Fed signals 0.25% interest rate increase. USD strength expected.',
+                impact: 'USD appreciation likely against major currencies',
+                timestamp: new Date(Date.now() - 15 * 60000),
+                active: true
+            },
+            {
+                id: 2,
+                country: 'Russia',
+                type: 'political',
+                severity: 'high',
+                title: 'Political Risk Increased',
+                description: 'Political tensions escalating. RUB weakness expected.',
+                impact: 'High volatility in RUB pairs',
+                timestamp: new Date(Date.now() - 45 * 60000),
+                active: true
+            },
+            {
+                id: 3,
+                country: 'Germany',
+                type: 'inflation',
+                severity: 'medium',
+                title: 'Inflation Data Released',
+                description: 'German inflation rises to 3.2%. ECB policy response anticipated.',
+                impact: 'EUR volatility expected',
+                timestamp: new Date(Date.now() - 2 * 3600000),
+                active: true
+            },
+            {
+                id: 4,
+                country: 'Japan',
+                type: 'policy',
+                severity: 'medium',
+                title: 'BOJ Policy Announcement',
+                description: 'Bank of Japan maintains ultra-loose monetary policy.',
+                impact: 'JPY remains weak against major currencies',
+                timestamp: new Date(Date.now() - 4 * 3600000),
+                active: true
+            },
+            {
+                id: 5,
+                country: 'India',
+                type: 'positive',
+                severity: 'low',
+                title: 'Strong GDP Growth',
+                description: 'India reports 7.8% GDP growth, exceeding expectations.',
+                impact: 'INR strength expected',
+                timestamp: new Date(Date.now() - 6 * 3600000),
+                active: true
+            }
+        ];
+
+        // Store markers
+        const markers = {};
+
+        // Initialize map markers
+        function initializeMarkers() {
+            geoEvents.forEach(event => {
+                if (event.active) {
+                    addMarker(event);
+                }
+            });
+            updateStatistics();
+            renderAlerts();
+        }
+
+        // Add marker to map
+        function addMarker(event) {
+            const country = countries[event.country];
+            if (!country) return;
+
+            const eventType = eventTypes[event.type];
+            const color = eventType.color;
+
+            // Create custom icon
+            const icon = L.divIcon({
+                className: 'custom-marker',
+                html: `
+                    <div class="pulse-marker" style="
+                        width: 40px;
+                        height: 40px;
+                        background: ${color};
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 0 20px ${color};
+                        border: 3px solid white;
+                    ">
+                        <i class="fas ${eventType.icon} text-white text-sm"></i>
+                    </div>
+                `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            // Create marker
+            const marker = L.marker(country.coords, { icon: icon }).addTo(map);
+
+            // Create popup
+            const popupContent = `
+                <div style="min-width: 250px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: ${color};">
+                        <i class="fas ${eventType.icon} mr-2"></i>${event.title}
+                    </h3>
+                    <p style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+                        ${event.description}
+                    </p>
+                    <div style="padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 0.75rem;">
+                        <strong style="color: #a78bfa;">Impact:</strong>
+                        <p style="font-size: 0.875rem; color: #e2e8f0; margin-top: 0.25rem;">${event.impact}</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #94a3b8;">
+                        <span><i class="fas fa-map-marker-alt mr-1"></i>${event.country}</span>
+                        <span><i class="fas fa-clock mr-1"></i>${getTimeAgo(event.timestamp)}</span>
+                    </div>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent);
+
+            // Store marker reference
+            markers[event.id] = marker;
+
+            // Flash animation
+            setTimeout(() => {
+                marker.getElement().classList.add('flash-animation');
+            }, 100);
+        }
+
+        // Render alerts list
+        function renderAlerts() {
+            const alertsList = document.getElementById('alertsList');
+            alertsList.innerHTML = '';
+
+            const activeEvents = geoEvents.filter(e => e.active).sort((a, b) => b.timestamp - a.timestamp);
+
+            if (activeEvents.length === 0) {
+                alertsList.innerHTML = '<p class="text-gray-400 text-center py-8">No active geo alerts</p>';
+                return;
+            }
+
+            activeEvents.forEach(event => {
+                const eventType = eventTypes[event.type];
+                const country = countries[event.country];
+                
+                const severityClass = event.severity === 'high' ? 'high-risk' : 
+                                     event.severity === 'medium' ? 'medium-risk' : 'policy';
+
+                const alertCard = document.createElement('div');
+                alertCard.className = `geo-alert-card ${severityClass}`;
+                alertCard.onclick = () => zoomToCountry(event);
+                
+                alertCard.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div style="
+                                width: 40px;
+                                height: 40px;
+                                background: ${eventType.color}20;
+                                border-radius: 10px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <i class="fas ${eventType.icon}" style="color: ${eventType.color}; font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold">${event.title}</h3>
+                                <p class="text-sm text-gray-400">${event.country} • ${country.region}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-500">${getTimeAgo(event.timestamp)}</span>
+                    </div>
+                    <p class="text-gray-300 text-sm mb-3">${event.description}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="currency-badge">${country.currency}</span>
+                        <button class="text-accent-blue text-sm hover:text-blue-400 transition-colors">
+                            <i class="fas fa-map-marked-alt mr-1"></i>View on Map
+                        </button>
+                    </div>
+                `;
+
+                alertsList.appendChild(alertCard);
+            });
+        }
+
+        // Zoom to country
+        function zoomToCountry(event) {
+            const country = countries[event.country];
+            if (!country) return;
+
+            map.setView(country.coords, 5, {
+                animate: true,
+                duration: 1
+            });
+
+            // Open popup
+            if (markers[event.id]) {
+                markers[event.id].openPopup();
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const activeEvents = geoEvents.filter(e => e.active);
+            
+            document.getElementById('activeEventsCount').textContent = activeEvents.length;
+            document.getElementById('highRiskCount').textContent = activeEvents.filter(e => e.severity === 'high').length;
+            document.getElementById('mediumRiskCount').textContent = activeEvents.filter(e => e.severity === 'medium').length;
+            document.getElementById('policyCount').textContent = activeEvents.filter(e => e.type === 'policy' || e.type === 'interest_rate').length;
+
+            // Update affected currencies
+            const currencies = {};
+            activeEvents.forEach(event => {
+                const currency = countries[event.country].currency;
+                if (!currencies[currency]) {
+                    currencies[currency] = { count: 0, trend: event.type === 'positive' ? 'up' : 'down' };
+                }
+                currencies[currency].count++;
+            });
+
+            const currenciesDiv = document.getElementById('affectedCurrencies');
+            currenciesDiv.innerHTML = '';
+
+            Object.entries(currencies).forEach(([currency, data]) => {
+                const trendColor = data.trend === 'up' ? 'text-accent-green' : 'text-red-400';
+                const trendIcon = data.trend === 'up' ? 'fa-arrow-up' : 'fa-arrow-down';
+                
+                currenciesDiv.innerHTML += `
+                    <div class="flex items-center justify-between p-3 bg-white bg-opacity-5 rounded-lg">
+                        <span class="text-white font-semibold">${currency}</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-400">${data.count} event${data.count > 1 ? 's' : ''}</span>
+                            <i class="fas ${trendIcon} ${trendColor}"></i>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Time ago helper
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+            return `${Math.floor(seconds / 86400)}d ago`;
+        }
+
+        // Reset map view
+        document.getElementById('resetMapBtn').addEventListener('click', () => {
+            map.setView([20, 0], 2, { animate: true });
+        });
+
+        // Simulate new events
+        function simulateNewEvent() {
+            const countryKeys = Object.keys(countries);
+            const typeKeys = Object.keys(eventTypes);
+            const severities = ['low', 'medium', 'high'];
+
+            const randomCountry = countryKeys[Math.floor(Math.random() * countryKeys.length)];
+            const randomType = typeKeys[Math.floor(Math.random() * typeKeys.length)];
+            const randomSeverity = severities[Math.floor(Math.random() * severities.length)];
+
+            const newEvent = {
+                id: Date.now(),
+                country: randomCountry,
+                type: randomType,
+                severity: randomSeverity,
+                title: `${eventTypes[randomType].label} in ${randomCountry}`,
+                description: `New ${eventTypes[randomType].label.toLowerCase()} detected. Market impact expected.`,
+                impact: `${countries[randomCountry].currency} volatility expected`,
+                timestamp: new Date(),
+                active: true
+            };
+
+            geoEvents.unshift(newEvent);
+            addMarker(newEvent);
+            updateStatistics();
+            renderAlerts();
+
+            // Show notification
+            showNotification(newEvent);
+        }
+
+        // Show notification
+        function showNotification(event) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md';
+            notification.style.animation = 'slideIn 0.4s ease';
+            
+            notification.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-bell text-2xl"></i>
+                    <div>
+                        <h3 class="font-semibold mb-1">New Geo Alert!</h3>
+                        <p class="text-sm opacity-90">${event.title}</p>
+                        <p class="text-xs opacity-75 mt-1">${event.country} • ${event.description}</p>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.4s ease';
+                setTimeout(() => notification.remove(), 400);
+            }, 5000);
+        }
+
+        // Initialize
+        initializeMarkers();
+
+        // Simulate new events every 15 seconds
+        setInterval(simulateNewEvent, 15000);
+    </script>
+</body>
+</html>

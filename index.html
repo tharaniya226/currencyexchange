@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forex Dashboard - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=5.2">
+    <link rel="stylesheet" href="assets/css/chatbot.css?v=5.2">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .dashboard-bg {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 25%, #0f1729 50%, #1a1f3a 75%, #0a0e27 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 2rem 1rem;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+        }
+
+        .sidebar-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .sidebar-item:hover i {
+            transform: scale(1.15);
+        }
+
+        .sidebar-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: white;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .sidebar-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .sidebar-item i {
+            transition: transform 0.3s ease;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Currency Card with 3D Tilt */
+        .currency-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .currency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .currency-card:hover {
+            transform: translateY(-8px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .currency-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Add New Card */
+        .add-new-card {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        /* Transaction Item */
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+        }
+
+        /* Notification Pulse */
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            width: 380px;
+            max-height: 500px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .notification-dropdown.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .notification-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .notification-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .notification-list::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 3px;
+        }
+        
+        .notification-item-dropdown {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-item-dropdown:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .notification-item-dropdown.unread {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Fade In Animation */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Stagger delays */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Button Glow */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-glow:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script src="assets/js/auth.js"></script>
+    <script>requireAuth();</script>
+
+    <div class="dashboard-bg">
+        <!-- Particle Background -->
+        <canvas class="particles" id="particles"></canvas>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-arrow-trend-up text-accent-blue"></i>
+                <span>FOREX</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="sidebar-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='forecast.html'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='my-wallet.html'">
+                    <i class="fas fa-wallet"></i>
+                    <span>My Wallet</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='alerts.html'">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='accounts.html'">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Accounts</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='converter.html'">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Converter</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='news.html'">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='settings.html'">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='security.html'">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='help.html'">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Centre</span>
+                </div>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 2rem;">
+                <div class="sidebar-item">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                    <i class="fas fa-toggle-on ml-auto text-accent-green"></i>
+                </div>
+                <div class="sidebar-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden fixed top-4 left-4 z-50 w-12 h-12 bg-white/10 backdrop-blur-lg rounded-xl flex items-center justify-center" id="mobileMenuBtn">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Header -->
+            <header class="flex justify-between items-center mb-8 flex-wrap gap-4 fade-in">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Welcome Back, Trader 👋</h1>
+                    <p class="text-gray-400">Here's what's happening in your forex account today.</p>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar -->
+                    <div class="glass-card flex items-center gap-3 px-4 py-2">
+                        <i class="fas fa-search text-gray-400"></i>
+                        <input type="text" id="searchInputMain" placeholder="Search..." class="bg-transparent border-none outline-none text-white w-48">
+                    </div>
+
+                    <!-- Notification -->
+                    <div class="glass-card relative w-12 h-12 flex items-center justify-center cursor-pointer btn-glow" id="notificationBtnMain">
+                        <i class="fas fa-bell text-white"></i>
+                        <div class="notification-badge"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Balance Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="glass-card fade-in delay-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Total Balance</span>
+                        <i class="fas fa-wallet text-accent-blue text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalBalance">$0</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-accent-green text-sm">+12.5%</span>
+                        <i class="fas fa-arrow-up text-accent-green text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card fade-in delay-2">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Total Profit</span>
+                        <i class="fas fa-arrow-trend-up text-accent-green text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalProfit">$0</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-accent-green text-sm">+8.2%</span>
+                        <i class="fas fa-arrow-up text-accent-green text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card fade-in delay-3">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Total Loss</span>
+                        <i class="fas fa-arrow-trend-down text-red-400 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalLoss">$0</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-red-400 text-sm">-3.1%</span>
+                        <i class="fas fa-arrow-down text-red-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card fade-in delay-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-gray-400 text-sm">Monthly Growth</span>
+                        <i class="fas fa-chart-line text-accent-blue text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-2" id="monthlyGrowth">0%</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-accent-green text-sm">+15.3%</span>
+                        <i class="fas fa-arrow-up text-accent-green text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Currency Accounts -->
+            <div class="mb-8 fade-in delay-2">
+                <h2 class="text-2xl font-bold text-white mb-4">My Currency Accounts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="currency-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇺🇸</span>
+                            <span class="text-sm text-gray-400">USD</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">$45,230.50</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-accent-green text-sm">+5.2%</span>
+                            <i class="fas fa-arrow-up text-accent-green text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="currency-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇪🇺</span>
+                            <span class="text-sm text-gray-400">EUR</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">€32,450.00</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-accent-green text-sm">+3.8%</span>
+                            <i class="fas fa-arrow-up text-accent-green text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="currency-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇮🇳</span>
+                            <span class="text-sm text-gray-400">INR</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">₹1,25,000</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-400 text-sm">-1.2%</span>
+                            <i class="fas fa-arrow-down text-red-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="currency-card add-new-card">
+                        <div class="text-center">
+                            <i class="fas fa-plus text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-400">Add New Account</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Chart & Recent Transactions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in delay-3">
+                <!-- Chart -->
+                <div class="lg:col-span-2 glass-card">
+                    <h3 class="text-xl font-bold text-white mb-4">Forex Analytics</h3>
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="glass-card">
+                    <h3 class="text-xl font-bold text-white mb-4">Recent Transactions</h3>
+                    <div>
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">USD → EUR</div>
+                                <div class="text-gray-400 text-sm">Today, 10:30 AM</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">$1,250</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">EUR → GBP</div>
+                                <div class="text-gray-400 text-sm">Yesterday, 3:15 PM</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">€850</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">GBP → USD</div>
+                                <div class="text-gray-400 text-sm">2 days ago</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">£500</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400">Pending</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">INR → USD</div>
+                                <div class="text-gray-400 text-sm">3 days ago</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">₹50,000</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Notification Dropdown -->
+        <div class="notification-dropdown" id="notificationDropdownMain">
+            <div class="notification-header">
+                <h3 class="text-white font-semibold text-lg">Notifications</h3>
+                <button id="markAllReadMain" class="text-sm text-accent-blue hover:text-white transition-colors">Mark all read</button>
+            </div>
+            <div class="notification-list">
+                <div class="notification-item-dropdown unread">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-arrow-up text-accent-green text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold mb-1">EUR/USD Rising</h4>
+                            <p class="text-gray-400 text-sm mb-2">Your EUR account gained +2.5% in the last hour</p>
+                            <span class="text-xs text-gray-500">5 minutes ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-item-dropdown unread">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-bell text-accent-blue text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold mb-1">Price Alert Triggered</h4>
+                            <p class="text-gray-400 text-sm mb-2">GBP/USD reached your target price of 1.2850</p>
+                            <span class="text-xs text-gray-500">15 minutes ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-item-dropdown">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-accent-green text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold mb-1">Transaction Complete</h4>
+                            <p class="text-gray-400 text-sm mb-2">Your USD to EUR conversion of $1,250 is complete</p>
+                            <span class="text-xs text-gray-500">1 hour ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-item-dropdown">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold mb-1">High Volatility Warning</h4>
+                            <p class="text-gray-400 text-sm mb-2">USD/INR showing unusual volatility patterns</p>
+                            <span class="text-xs text-gray-500">2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-item-dropdown">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-newspaper text-accent-blue text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold mb-1">Market News</h4>
+                            <p class="text-gray-400 text-sm mb-2">Federal Reserve announces interest rate decision</p>
+                            <span class="text-xs text-gray-500">3 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="notification-header border-t">
+                <a href="alerts.html" class="text-accent-blue hover:text-white transition-colors text-sm font-semibold">View All Notifications →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <script src="assets/js/chatbot.js"></script>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+
+        // Particle background
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                radius: Math.random() * 2
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.5)';
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Number count-up animation
+        function animateValue(id, start, end, duration, prefix = '', suffix = '') {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, 16);
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateValue('totalBalance', 0, 45230, 2000, '$');
+            animateValue('totalProfit', 0, 8450, 2000, '$');
+            animateValue('totalLoss', 0, 1250, 2000, '$');
+            animateValue('monthlyGrowth', 0, 15.3, 2000, '', '%');
+        });
+
+        // Chart.js Analytics
+        const ctx2 = document.getElementById('analyticsChart');
+        if (ctx2) {
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Deposits',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }, {
+                        label: 'Withdrawals',
+                        data: [8000, 12000, 10000, 15000, 18000, 20000],
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(102, 126, 234, 0.5)',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Search functionality
+        const searchInputMain = document.getElementById('searchInputMain');
+        if (searchInputMain) {
+            searchInputMain.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                // Visual feedback
+                if (searchTerm.length > 0) {
+                    this.parentElement.style.borderColor = 'rgba(102, 126, 234, 0.8)';
+                    this.parentElement.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+                    
+                    // You can add search logic here to filter content
+                    console.log('Searching for:', searchTerm);
+                } else {
+                    this.parentElement.style.borderColor = '';
+                    this.parentElement.style.boxShadow = '';
+                }
+            });
+            
+            // Enter key to navigate to search page or alerts
+            searchInputMain.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && this.value.trim()) {
+                    // Navigate to alerts page with search term
+                    window.location.href = `alerts.html?search=${encodeURIComponent(this.value)}`;
+                }
+            });
+        }
+        
+        // Notification dropdown functionality
+        const notificationBtnMain = document.getElementById('notificationBtnMain');
+        const notificationDropdownMain = document.getElementById('notificationDropdownMain');
+        const markAllReadMainBtn = document.getElementById('markAllReadMain');
+        
+        if (notificationBtnMain && notificationDropdownMain) {
+            notificationBtnMain.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdownMain.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdownMain.contains(e.target) && e.target !== notificationBtnMain) {
+                    notificationDropdownMain.classList.remove('show');
+                }
+            });
+            
+            // Mark all as read
+            if (markAllReadMainBtn) {
+                markAllReadMainBtn.addEventListener('click', function() {
+                    const unreadItems = notificationDropdownMain.querySelectorAll('.notification-item-dropdown.unread');
+                    unreadItems.forEach(item => {
+                        item.classList.remove('unread');
+                    });
+                    
+                    // Hide notification badge
+                    const badge = notificationBtnMain.querySelector('.notification-badge');
+                    if (badge) {
+                        badge.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => {
+                            badge.style.display = 'none';
+                        }, 300);
+                    }
+                    
+                    // Visual feedback
+                    this.textContent = 'All read ✓';
+                    setTimeout(() => {
+                        this.textContent = 'Mark all read';
+                    }, 2000);
+                });
+            }
+            
+            // Click on notification items
+            notificationDropdownMain.querySelectorAll('.notification-item-dropdown').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.classList.remove('unread');
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 100);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

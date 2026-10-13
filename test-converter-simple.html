@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Converter Test - Simple</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .note-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .note-display img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            transform: scale(1.02);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .debug {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Converter Test</h1>
+        
+        <div class="note-display">
+            <img id="noteImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='450' height='220'%3E%3Crect width='450' height='220' fill='%2385bb65' rx='16'/%3E%3Ctext x='225' y='110' font-family='Georgia,serif' font-size='80' fill='%23fff' text-anchor='middle'%3E$%3C/text%3E%3C/svg%3E" alt="Currency Note">
+        </div>
+        
+        <div class="input-group">
+            <label>From Currency:</label>
+            <select id="fromCurrency">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="INR">INR - Indian Rupee</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label>Amount:</label>
+            <input type="number" id="fromAmount" value="100" placeholder="Enter amount">
+        </div>
+        
+        <div class="input-group">
+            <label>To Currency:</label>
+            <select id="toCurrency">
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR" selected>EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="INR">INR - Indian Rupee</option>
+            </select>
+        </div>
+        
+        <button onclick="testConvert()">Convert Now</button>
+        <button onclick="testSwap()">Swap Currencies</button>
+        
+        <div class="result" id="result">
+            Result will appear here
+        </div>
+        
+        <div class="debug" id="debug">
+            Debug info will appear here
+        </div>
+    </div>
+
+    <script>
+        // Simple currency data
+        const currencies = {
+            USD: { rate: 1, noteImg: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="450" height="220"%3E%3Crect width="450" height="220" fill="%2385bb65" rx="16"/%3E%3Ctext x="225" y="110" font-family="Georgia,serif" font-size="80" fill="%23fff" text-anchor="middle"%3E$%3C/text%3E%3C/svg%3E' },
+            EUR: { rate: 0.92, noteImg: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="450" height="220"%3E%3Crect width="450" height="220" fill="%234a90e2" rx="16"/%3E%3Ctext x="225" y="110" font-family="Georgia,serif" font-size="80" fill="%23fff" text-anchor="middle"%3E€%3C/text%3E%3C/svg%3E' },
+            GBP: { rate: 0.79, noteImg: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="450" height="220"%3E%3Crect width="450" height="220" fill="%239b59b6" rx="16"/%3E%3Ctext x="225" y="110" font-family="Georgia,serif" font-size="80" fill="%23fff" text-anchor="middle"%3E£%3C/text%3E%3C/svg%3E' },
+            JPY: { rate: 149.82, noteImg: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="450" height="220"%3E%3Crect width="450" height="220" fill="%23e74c3c" rx="16"/%3E%3Ctext x="225" y="110" font-family="Georgia,serif" font-size="80" fill="%23fff" text-anchor="middle"%3E¥%3C/text%3E%3C/svg%3E' },
+            INR: { rate: 83.24, noteImg: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="450" height="220"%3E%3Crect width="450" height="220" fill="%23ff9933" rx="16"/%3E%3Ctext x="225" y="110" font-family="Georgia,serif" font-size="80" fill="%23fff" text-anchor="middle"%3E₹%3C/text%3E%3C/svg%3E' }
+        };
+
+        function log(message) {
+            const debug = document.getElementById('debug');
+            debug.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        function updateNote() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const noteImage = document.getElementById('noteImage');
+            
+            log('📸 Updating note to: ' + fromCurrency);
+            noteImage.src = currencies[fromCurrency].noteImg;
+        }
+
+        function testConvert() {
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            const amount = parseFloat(document.getElementById('fromAmount').value) || 0;
+            
+            log('💰 Converting: ' + amount + ' ' + fromCurrency + ' to ' + toCurrency);
+            
+            const fromRate = currencies[fromCurrency].rate;
+            const toRate = currencies[toCurrency].rate;
+            const result = (amount / fromRate) * toRate;
+            
+            document.getElementById('result').innerHTML = 
+                amount + ' ' + fromCurrency + ' = <br>' + 
+                result.toFixed(2) + ' ' + toCurrency;
+            
+            log('✅ Result: ' + result.toFixed(2) + ' ' + toCurrency);
+            updateNote();
+        }
+
+        function testSwap() {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+            
+            log('🔄 Swapped: ' + fromSelect.value + ' ↔️ ' + toSelect.value);
+            updateNote();
+            testConvert();
+        }
+
+        // Initialize
+        document.getElementById('fromCurrency').addEventListener('change', updateNote);
+        document.getElementById('fromAmount').addEventListener('input', testConvert);
+        document.getElementById('toCurrency').addEventListener('change', testConvert);
+        
+        log('✅ Test page loaded successfully!');
+        log('📊 Available currencies: ' + Object.keys(currencies).join(', '));
+        updateNote();
+        testConvert();
+    </script>
+</body>
+</html>

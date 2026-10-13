@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1e293b;
+            color: white;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #10b981;
+        }
+        .error {
+            background: #ef4444;
+        }
+        .loading {
+            background: #3b82f6;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        pre {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔌 Backend Connection Test</h1>
+    
+    <div id="status" class="status loading">
+        Testing connection to backend...
+    </div>
+
+    <button onclick="testConnection()">🔄 Test Again</button>
+
+    <h2>Response Data:</h2>
+    <pre id="response">Waiting for response...</pre>
+
+    <h2>Instructions:</h2>
+    <ol>
+        <li>Backend should be running on: <strong>http://localhost:5000</strong></li>
+        <li>Frontend should be running on: <strong>http://localhost:8000</strong></li>
+        <li>Open this page at: <strong>http://localhost:8000/test_connection.html</strong></li>
+    </ol>
+
+    <script>
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            
+            statusDiv.className = 'status loading';
+            statusDiv.textContent = '⏳ Testing connection to http://localhost:5000/api/rates...';
+            responseDiv.textContent = 'Loading...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/rates');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ SUCCESS! Backend is connected and working!';
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `
+                    ❌ ERROR: Cannot connect to backend<br>
+                    <small>${error.message}</small><br><br>
+                    <strong>Make sure:</strong><br>
+                    1. Backend is running: python app.py (in backend folder)<br>
+                    2. Backend is on port 5000<br>
+                    3. No firewall blocking the connection
+                `;
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Test on page load
+        testConnection();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Alerts - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
+    <style>
+        /* Premium Fintech Styling - Enhanced */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.6));
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #10b981);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4), 0 0 40px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+        
+        .pill-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+        }
+        .pill-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .pill-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .pill-button.active {
+            border-color: rgba(102, 126, 234, 1);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.2));
+            color: white;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5), inset 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: scale(1.05);
+        }
+        .pill-button:active {
+            transform: scale(0.98);
+        }
+        
+        .ai-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 0.4rem 1rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            animation: badge-pulse 2s infinite;
+        }
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(102, 126, 234, 0.6); }
+        }
+        
+        .ai-section {
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(102, 126, 234, 0.05));
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ai-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.1), transparent 30%);
+            animation: rotate 8s linear infinite;
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        .ai-section.active {
+            animation: pulse-glow 2s infinite;
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), inset 0 0 30px rgba(139, 92, 246, 0.1);
+            }
+            50% { 
+                box-shadow: 0 0 50px rgba(139, 92, 246, 0.5), inset 0 0 50px rgba(139, 92, 246, 0.2);
+            }
+        }
+
+        .threshold-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            outline: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .threshold-slider:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+        }
+        .threshold-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), 0 0 40px rgba(102, 126, 234, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .threshold-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.8), 0 0 60px rgba(102, 126, 234, 0.4);
+        }
+        .threshold-slider::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+        }
+        .threshold-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), 0 0 40px rgba(102, 126, 234, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .threshold-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.8), 0 0 60px rgba(102, 126, 234, 0.4);
+        }
+        
+        .event-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .event-chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .event-chip:hover::before {
+            left: 100%;
+        }
+        .event-chip:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+        }
+        .event-chip.selected {
+            border-color: rgba(16, 185, 129, 0.9);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.15));
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4), inset 0 0 20px rgba(16, 185, 129, 0.1);
+            transform: scale(1.05);
+        }
+        .event-chip.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in-right {
+            animation: slideInRight 0.4s ease;
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Enhanced Notification Items */
+        .notification-item {
+            padding: 1.25rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .notification-item:hover::before {
+            opacity: 1;
+        }
+        .notification-item:hover {
+            transform: translateX(-5px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .notification-item button {
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        .notification-item:hover button {
+            opacity: 1;
+        }
+        .notification-item button:hover {
+            transform: scale(1.2) rotate(90deg);
+            color: #ef4444;
+        }
+        
+        /* Enhanced Filter Panel */
+        #filterPanel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        #filterPanel select {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #filterPanel select:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+        }
+        #filterPanel select:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Search Input Enhancement */
+        #searchAlerts {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #searchAlerts:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 25px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+        }
+        
+        /* Button Enhancements */
+        #filterBtn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        #filterBtn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        #filterBtn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        #filterBtn:hover {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        #applyFilter {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        #applyFilter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        #applyFilter:hover::before {
+            left: 100%;
+        }
+        #applyFilter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+        #applyFilter:active {
+            transform: translateY(0);
+        }
+        
+        #clearFilter {
+            transition: all 0.3s ease;
+        }
+        #clearFilter:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Time Window Select Enhancement */
+        #timeWindow {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #timeWindow:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+        }
+        #timeWindow:focus {
+            border-color: rgba(16, 185, 129, 0.8);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Threshold Input Enhancement */
+        #thresholdInput {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        #thresholdInput:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+        }
+        
+        /* Severity Badge Enhancements */
+        .notification-item [class*="bg-yellow-500"] {
+            animation: pulse-yellow 2s infinite;
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { box-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.5); }
+        }
+        
+        /* Glass Card Enhancement */
+        .glass-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transition: left 1s ease;
+        }
+        .glass-card:hover::before {
+            left: 100%;
+        }
+        
+        /* Enhanced Toggle Switches */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 34px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 2px;
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(28px);
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.5);
+        }
+        .toggle-slider:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        .toggle-switch input:checked + .toggle-slider:hover {
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.7), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Section Title Enhancement */
+        .section-title {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #10b981);
+            transition: width 0.6s ease;
+        }
+        .glass-card:hover .section-title::after {
+            width: 100%;
+        }
+        
+        /* Alert Toggle Enhancement */
+        .alert-toggle {
+            padding: 1rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .alert-toggle:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-dark">
+    <div class="animated-bg"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar glass-card">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-chart-line text-3xl text-accent-blue"></i>
+                <h1 class="text-xl font-bold text-white">ForexCast</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="forecast.html" class="nav-link">Forecast</a>
+                <a href="converter.html" class="nav-link">Converter</a>
+                <a href="news.html" class="nav-link">News</a>
+                <a href="geo-alerts.html" class="nav-link">Geo Alerts</a>
+                <a href="alerts.html" class="nav-link active">Alerts</a>
+            </div>
+            <button class="hamburger md:hidden" id="hamburger">
+                <i class="fas fa-bars text-white text-2xl"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-link">Dashboard</a>
+        <a href="forecast.html" class="mobile-link">Forecast</a>
+        <a href="converter.html" class="mobile-link">Converter</a>
+        <a href="news.html" class="mobile-link">News</a>
+        <a href="geo-alerts.html" class="mobile-link">Geo Alerts</a>
+        <a href="alerts.html" class="mobile-link active">Alerts</a>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-white mb-8">Smart Alert System</h1>
+
+        <!-- Alert Analytics Panel -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="stat-card fade-in" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between mb-3">
+                    <i class="fas fa-bell text-2xl text-accent-blue"></i>
+                    <span class="text-xs text-gray-400">This Week</span>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-1" id="alertsCount">0</h3>
+                <p class="text-sm text-gray-400">Alerts Triggered</p>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between mb-3">
+                    <i class="fas fa-bullseye text-2xl text-accent-green"></i>
+                    <span class="text-xs text-gray-400">AI Model</span>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-1" id="accuracyCount">0</h3>
+                <p class="text-sm text-gray-400">Prediction Accuracy</p>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between mb-3">
+                    <i class="fas fa-exclamation-triangle text-2xl text-yellow-400"></i>
+                    <span class="text-xs text-gray-400">High Risk</span>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-1" id="riskCount">0</h3>
+                <p class="text-sm text-gray-400">High Risk Events</p>
+            </div>
+
+            <div class="stat-card fade-in" style="animation-delay: 0.4s">
+                <div class="flex items-center justify-between mb-3">
+                    <i class="fas fa-chart-line text-2xl text-purple-400"></i>
+                    <span class="text-xs text-gray-400">Most Volatile</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1">GBP/JPY</h3>
+                <p class="text-sm text-gray-400">Currency Pair</p>
+            </div>
+        </div>
+
+        <!-- Smart Alert Customization -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="section-title mb-6">Smart Alert Customization</h2>
+            
+            <!-- Custom Threshold Input -->
+            <div class="mb-6 p-4 rounded-lg" style="background: rgba(102, 126, 234, 0.05); border: 1px solid rgba(102, 126, 234, 0.2);">
+                <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-sliders-h text-accent-blue"></i>
+                    Custom Threshold
+                </h3>
+                <div class="mb-4">
+                    <label class="text-sm text-gray-400 mb-2 block">Alert me when EUR/USD changes more than</label>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="thresholdInput" value="1.5" min="0.5" max="5" step="0.1" 
+                            class="w-24 px-3 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white focus:outline-none focus:border-accent-blue transition-all">
+                        <span class="text-white font-semibold">%</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <input type="range" id="thresholdSlider" class="threshold-slider" min="0.5" max="5" step="0.1" value="1.5">
+                </div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>0.5%</span>
+                    <span id="sliderValue" class="text-accent-blue font-semibold">1.5%</span>
+                    <span>5.0%</span>
+                </div>
+            </div>
+
+            <!-- Time Window Selection -->
+            <div class="mb-6">
+                <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+                    <i class="fas fa-clock text-accent-green"></i>
+                    Time Window
+                </h3>
+                <select id="timeWindow" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white focus:outline-none focus:border-accent-green transition-all cursor-pointer">
+                    <option value="5min">Last 5 minutes</option>
+                    <option value="1hour" selected>Last 1 hour</option>
+                    <option value="1day">Last 1 day</option>
+                </select>
+            </div>
+
+            <!-- Notification Type Selector -->
+            <div>
+                <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+                    <i class="fas fa-bell text-yellow-400"></i>
+                    Notification Type
+                </h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="pill-button active" data-type="push">
+                        <i class="fas fa-mobile-alt mr-2"></i>Push
+                    </button>
+                    <button class="pill-button active" data-type="email">
+                        <i class="fas fa-envelope mr-2"></i>Email
+                    </button>
+                    <button class="pill-button" data-type="sms">
+                        <i class="fas fa-sms mr-2"></i>SMS
+                    </button>
+                    <button class="pill-button active" data-type="inapp">
+                        <i class="fas fa-bell mr-2"></i>In-app only
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Smart Alerts -->
+        <div class="glass-card p-6 mb-8 ai-section" id="aiSection">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="section-title flex items-center gap-3">
+                    <i class="fas fa-brain text-purple-400"></i>
+                    AI Smart Alerts
+                    <span class="ai-badge">AI</span>
+                </h2>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="aiMasterToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <div class="space-y-4" id="aiAlertOptions">
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Abnormal Volatility Detection</h3>
+                            <p class="text-sm text-gray-400">AI detects unusual market patterns</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="ai-alert-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Low Confidence Warning</h3>
+                            <p class="text-sm text-gray-400">Alert when prediction confidence drops below 70%</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="ai-alert-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Market Sentiment Flip</h3>
+                            <p class="text-sm text-gray-400">Notify when market sentiment changes direction</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="ai-alert-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Unusual Correlation</h3>
+                            <p class="text-sm text-gray-400">Alert on abnormal currency pair correlations</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" class="ai-alert-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographical Smart Alerts -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="section-title mb-6 flex items-center gap-2">
+                <i class="fas fa-globe text-accent-green"></i>
+                Geographical Smart Alerts
+            </h2>
+            
+            <div class="mb-4">
+                <h3 class="text-white font-semibold mb-3">Event-Based Alerts</h3>
+                <div class="flex flex-wrap gap-3">
+                    <div class="event-chip" data-event="fed">
+                        <span class="text-2xl">🇺🇸</span>
+                        <span class="text-white text-sm">US Federal Reserve Speech</span>
+                    </div>
+                    <div class="event-chip" data-event="rbi">
+                        <span class="text-2xl">🇮🇳</span>
+                        <span class="text-white text-sm">RBI Monetary Policy</span>
+                    </div>
+                    <div class="event-chip" data-event="uk-cpi">
+                        <span class="text-2xl">🇬🇧</span>
+                        <span class="text-white text-sm">UK CPI Release</span>
+                    </div>
+                    <div class="event-chip" data-event="ecb">
+                        <span class="text-2xl">🇪🇺</span>
+                        <span class="text-white text-sm">ECB Rate Decision</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-white font-semibold mb-3">Alert Before Event</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button class="pill-button active" data-time="15min">15 minutes</button>
+                    <button class="pill-button" data-time="1hour">1 hour</button>
+                    <button class="pill-button" data-time="1day">1 day</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Settings (Original) -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="section-title mb-6">Personalized Alerts</h2>
+            <div class="space-y-4">
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Price Movement Alerts</h3>
+                            <p class="text-sm text-gray-400">Get notified when rates change by 1% or more</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Prediction Updates</h3>
+                            <p class="text-sm text-gray-400">Receive AI prediction changes in real-time</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Market News</h3>
+                            <p class="text-sm text-gray-400">Breaking news affecting currency markets</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="alert-toggle">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-white font-semibold mb-1">Risk Warnings</h3>
+                            <p class="text-sm text-gray-400">High volatility and risk level notifications</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Filtering System -->
+        <div class="glass-card p-6 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+                <h2 class="section-title">Recent Notifications</h2>
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <input type="text" id="searchAlerts" placeholder="Search alerts..." 
+                            class="pl-10 pr-4 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white placeholder-gray-500 focus:outline-none focus:border-accent-blue transition-all">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button id="filterBtn" class="px-4 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white hover:border-accent-blue transition-all">
+                        <i class="fas fa-filter mr-2"></i>Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Panel (Hidden by default) -->
+            <div id="filterPanel" class="hidden mb-6 p-4 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-10">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="text-sm text-gray-400 mb-2 block">Currency Pair</label>
+                        <select class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white text-sm">
+                            <option>All Pairs</option>
+                            <option>EUR/USD</option>
+                            <option>GBP/USD</option>
+                            <option>USD/INR</option>
+                            <option>GBP/JPY</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 mb-2 block">Alert Type</label>
+                        <select class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white text-sm">
+                            <option>All Types</option>
+                            <option>Price Movement</option>
+                            <option>Prediction Update</option>
+                            <option>Market News</option>
+                            <option>Risk Warning</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 mb-2 block">Severity</label>
+                        <select class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white text-sm">
+                            <option>All Levels</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 mb-2 block">Date Range</label>
+                        <select class="w-full px-3 py-2 rounded-lg bg-white bg-opacity-5 border border-white border-opacity-20 text-white text-sm">
+                            <option>Last 24 hours</option>
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>All time</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-3">
+                    <button id="applyFilter" class="px-4 py-2 rounded-lg bg-accent-blue text-white hover:bg-opacity-80 transition-all">
+                        Apply Filters
+                    </button>
+                    <button id="clearFilter" class="px-4 py-2 rounded-lg bg-white bg-opacity-5 text-white hover:bg-opacity-10 transition-all">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="space-y-4" id="notificationsList">
+                <div class="notification-item bg-yellow-500 bg-opacity-10 border-l-4 border-yellow-500 slide-in-right">
+                    <div class="flex items-start space-x-4">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-2xl">💶💵</span>
+                                <h3 class="text-white font-semibold">High Volatility Alert</h3>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">
+                                EUR/USD pair showing unusual volatility. Current movement: +1.2%
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500">15 minutes ago</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-yellow-500 bg-opacity-20 text-yellow-400">High</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notification-item bg-green-500 bg-opacity-10 border-l-4 border-green-500 slide-in-right" style="animation-delay: 0.1s">
+                    <div class="flex items-start space-x-4">
+                        <i class="fas fa-arrow-up text-accent-green text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-2xl">🇬🇧💵</span>
+                                <h3 class="text-white font-semibold">Prediction Update</h3>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">
+                                GBP/USD prediction changed to Bullish with 91% confidence
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500">1 hour ago</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500 bg-opacity-20 text-green-400">Medium</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notification-item bg-blue-500 bg-opacity-10 border-l-4 border-blue-500 slide-in-right" style="animation-delay: 0.2s">
+                    <div class="flex items-start space-x-4">
+                        <i class="fas fa-newspaper text-accent-blue text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-2xl">🇺🇸</span>
+                                <h3 class="text-white font-semibold">Market News</h3>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">
+                                Federal Reserve signals interest rate hike - High impact expected
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500">2 hours ago</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-blue-500 bg-opacity-20 text-blue-400">High</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notification-item bg-red-500 bg-opacity-10 border-l-4 border-red-500 slide-in-right" style="animation-delay: 0.3s">
+                    <div class="flex items-start space-x-4">
+                        <i class="fas fa-chart-line text-red-400 text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-2xl">🇺🇸🇮🇳</span>
+                                <h3 class="text-white font-semibold">Price Movement</h3>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">
+                                USD/INR dropped by 1.5% in the last hour
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500">3 hours ago</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-red-500 bg-opacity-20 text-red-400">Medium</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notification-item bg-purple-500 bg-opacity-10 border-l-4 border-purple-500 slide-in-right" style="animation-delay: 0.4s">
+                    <div class="flex items-start space-x-4">
+                        <i class="fas fa-brain text-purple-400 text-xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="ai-badge">AI</span>
+                                <h3 class="text-white font-semibold">AI System Update</h3>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-2">
+                                ML model retrained with latest data - Accuracy improved to 89%
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-500">5 hours ago</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-purple-500 bg-opacity-20 text-purple-400">Low</span>
+                            </div>
+                        </div>
+                        <button class="text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Popup -->
+    <div class="alert-popup" id="alertPopup">
+        <div class="flex items-center space-x-3">
+            <i class="fas fa-bell text-2xl text-accent-blue"></i>
+            <div>
+                <h3 class="font-semibold text-white">New Alert</h3>
+                <p class="text-sm text-gray-300">USD/EUR rate changed by +0.8%</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/config.js?v=5.0"></script>
+    <script src="assets/js/api.js?v=5.0"></script>
+    <script src="assets/js/main.js?v=5.0"></script>
+    <script src="assets/js/alerts.js?v=5.0"></script>
+    <script src="assets/js/chatbot.js?v=5.0"></script>
+    
+    <script>
+        // Number count-up animation with enhanced effects
+        function animateValue(id, start, end, duration, suffix = '') {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            
+            // Add loading shimmer effect
+            obj.style.background = 'linear-gradient(90deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2))';
+            obj.style.backgroundClip = 'text';
+            obj.style.webkitBackgroundClip = 'text';
+            obj.style.color = 'transparent';
+            
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                    // Remove shimmer effect when done
+                    setTimeout(() => {
+                        obj.style.background = '';
+                        obj.style.backgroundClip = '';
+                        obj.style.webkitBackgroundClip = '';
+                        obj.style.color = '';
+                    }, 200);
+                }
+                obj.textContent = Math.floor(current) + suffix;
+            }, 16);
+        }
+
+        // Initialize animations with staggered timing
+        window.addEventListener('load', () => {
+            setTimeout(() => animateValue('alertsCount', 0, 24, 1500), 200);
+            setTimeout(() => animateValue('accuracyCount', 0, 91, 1500, '%'), 400);
+            setTimeout(() => animateValue('riskCount', 0, 6, 1500), 600);
+            
+            // Add entrance animation to main content
+            document.querySelectorAll('.glass-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 800 + (index * 100));
+            });
+        });
+
+        // Threshold slider sync
+        const slider = document.getElementById('thresholdSlider');
+        const input = document.getElementById('thresholdInput');
+        const sliderValue = document.getElementById('sliderValue');
+
+        slider.addEventListener('input', (e) => {
+            const value = e.target.value;
+            input.value = value;
+            sliderValue.textContent = value + '%';
+            
+            // Enhanced glow effect
+            slider.style.transition = 'all 0.3s ease';
+            slider.style.filter = 'drop-shadow(0 0 20px rgba(102, 126, 234, 0.8))';
+            sliderValue.style.transform = 'scale(1.2)';
+            sliderValue.style.color = '#667eea';
+            
+            setTimeout(() => {
+                slider.style.filter = '';
+                sliderValue.style.transform = 'scale(1)';
+                sliderValue.style.color = '';
+            }, 300);
+        });
+
+        input.addEventListener('input', (e) => {
+            const value = Math.min(5, Math.max(0.5, e.target.value));
+            slider.value = value;
+            sliderValue.textContent = value + '%';
+        });
+
+        // Notification type pills with ripple effect
+        document.querySelectorAll('.pill-button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                this.classList.toggle('active');
+                
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(102, 126, 234, 0.5)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+                ripple.style.pointerEvents = 'none';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Event chips with enhanced feedback
+        document.querySelectorAll('.event-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                
+                // Add bounce effect
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'bounce 0.5s ease';
+                }, 10);
+            });
+        });
+        
+        // Add bounce animation
+        const bounceStyle = document.createElement('style');
+        bounceStyle.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0) scale(1); }
+                25% { transform: translateY(-10px) scale(1.05); }
+                50% { transform: translateY(0) scale(1); }
+                75% { transform: translateY(-5px) scale(1.02); }
+            }
+        `;
+        document.head.appendChild(bounceStyle);
+
+        // AI Master Toggle
+        const aiMasterToggle = document.getElementById('aiMasterToggle');
+        const aiSection = document.getElementById('aiSection');
+        const aiAlertToggles = document.querySelectorAll('.ai-alert-toggle');
+
+        aiMasterToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                aiSection.classList.add('active');
+                aiAlertToggles.forEach(toggle => toggle.disabled = false);
+            } else {
+                aiSection.classList.remove('active');
+                aiAlertToggles.forEach(toggle => toggle.disabled = true);
+            }
+        });
+
+        // Filter panel toggle with smooth animation
+        const filterBtn = document.getElementById('filterBtn');
+        const filterPanel = document.getElementById('filterPanel');
+
+        filterBtn.addEventListener('click', () => {
+            if (filterPanel.classList.contains('hidden')) {
+                filterPanel.classList.remove('hidden');
+                filterPanel.style.opacity = '0';
+                filterPanel.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    filterPanel.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    filterPanel.style.opacity = '1';
+                    filterPanel.style.transform = 'translateY(0)';
+                }, 10);
+                filterBtn.innerHTML = '<i class="fas fa-times mr-2"></i>Close';
+            } else {
+                filterPanel.style.opacity = '0';
+                filterPanel.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    filterPanel.classList.add('hidden');
+                }, 400);
+                filterBtn.innerHTML = '<i class="fas fa-filter mr-2"></i>Filter';
+            }
+        });
+
+        // Clear filters with animation
+        document.getElementById('clearFilter').addEventListener('click', () => {
+            const selects = filterPanel.querySelectorAll('select');
+            selects.forEach((select, index) => {
+                setTimeout(() => {
+                    select.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        select.selectedIndex = 0;
+                        select.style.transform = 'scale(1)';
+                    }, 100);
+                }, index * 50);
+            });
+            
+            const searchInput = document.getElementById('searchAlerts');
+            searchInput.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                searchInput.value = '';
+                searchInput.style.transform = 'scale(1)';
+            }, 100);
+        });
+        
+        // Apply filter with feedback
+        document.getElementById('applyFilter').addEventListener('click', function() {
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Show success indicator
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check mr-2"></i>Applied!';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 1500);
+        });
+
+        // Dismiss notifications with enhanced animation
+        document.querySelectorAll('.notification-item button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const notification = this.closest('.notification-item');
+                
+                // Add exit animation
+                notification.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px) scale(0.8)';
+                notification.style.maxHeight = notification.offsetHeight + 'px';
+                
+                setTimeout(() => {
+                    notification.style.maxHeight = '0';
+                    notification.style.marginBottom = '0';
+                    notification.style.padding = '0';
+                }, 200);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 600);
+            });
+        });
+        
+        // Search input with live feedback
+        const searchInput = document.getElementById('searchAlerts');
+        searchInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.style.borderColor = 'rgba(102, 126, 234, 0.8)';
+                this.style.boxShadow = '0 0 25px rgba(102, 126, 234, 0.3)';
+            } else {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+            }
+        });
+        
+        // Parallax effect on scroll
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const statCards = document.querySelectorAll('.stat-card');
+                    statCards.forEach((card, index) => {
+                        const speed = 0.05 + (index * 0.01);
+                        card.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // Enhanced AI section interactions
+        const aiAlertToggles = document.querySelectorAll('.ai-alert-toggle');
+        aiAlertToggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const alertToggle = this.closest('.alert-toggle');
+                if (this.checked) {
+                    alertToggle.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(102, 126, 234, 0.05))';
+                    alertToggle.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+                    
+                    // Add pulse effect
+                    alertToggle.style.animation = 'pulse 0.5s ease';
+                } else {
+                    alertToggle.style.background = '';
+                    alertToggle.style.borderColor = '';
+                }
+            });
+        });
+        
+        // Add pulse animation for AI toggles
+        const pulseStyle = document.createElement('style');
+        pulseStyle.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+            }
+        `;
+        document.head.appendChild(pulseStyle);
+        
+        // Smooth scroll behavior for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

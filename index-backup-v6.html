@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Forex Dashboard - ForexCast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=6.0">
+    <link rel="stylesheet" href="assets/css/chatbot.css?v=6.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Dashboard Specific Styles - ENHANCED */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 25%, #0f1729 50%, #1a1f35 75%, #0a0e1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Sidebar Styles - PREMIUM ENHANCED */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            box-shadow: 
+                4px 0 24px rgba(0, 0, 0, 0.5),
+                inset -1px 0 0 rgba(102, 126, 234, 0.1);
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(102, 126, 234, 0.8), 0 0 40px rgba(118, 75, 162, 0.4); }
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .sidebar-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(102, 126, 234, 0.15);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .sidebar-item:hover::after {
+            opacity: 1;
+        }
+
+        .sidebar-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: white;
+            box-shadow: 
+                0 0 20px rgba(102, 126, 234, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-item.active::before {
+            transform: scaleY(1);
+        }
+
+        .sidebar-item.active::after {
+            opacity: 1;
+        }
+
+        .sidebar-item i {
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item:hover i {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+            width: calc(100% - 280px);
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            flex: 1;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: notificationPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes notificationPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Currency Cards */
+        .currency-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Currency Cards - REFINED */
+        .currency-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .currency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .currency-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .currency-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                0 12px 24px rgba(102, 126, 234, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .currency-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .currency-card:hover::after {
+            opacity: 1;
+        }
+
+        .currency-card.add-new {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        /* Stats Cards - REFINED PROFESSIONAL */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.08) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                0 12px 24px rgba(102, 126, 234, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Chart Card - Enhanced */
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                0 10px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                0 16px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Transactions - Enhanced */
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transaction-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .transaction-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .search-bar {
+                min-width: 200px;
+            }
+        }
+
+        /* Sequential Fade In Animation */
+        .fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger animation delays for sequential appearance */
+        .stats-grid .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stats-grid .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stats-grid .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stats-grid .stat-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .currency-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .currency-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .currency-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .currency-card:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Premium Glow Pulse for Important Metrics */
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow: 
+                    0 4px 6px rgba(0, 0, 0, 0.1),
+                    0 8px 16px rgba(0, 0, 0, 0.15);
+            }
+            50% {
+                box-shadow: 
+                    0 4px 6px rgba(0, 0, 0, 0.1),
+                    0 8px 16px rgba(0, 0, 0, 0.15),
+                    0 0 30px rgba(102, 126, 234, 0.4);
+            }
+        }
+
+        .stat-card:first-child {
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        /* Floating Animation for Cards */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        /* Card Float Animation - SUBTLE */
+        @keyframes cardFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Moving Light Reflection on Card */
+        .card-reflection {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: skewX(-20deg);
+            animation: lightMove 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes lightMove {
+            0%, 100% {
+                left: -50%;
+            }
+            50% {
+                left: 150%;
+            }
+        }
+
+        /* Sparkline Animation */
+        .sparkline {
+            opacity: 0;
+            animation: fadeInSparkline 0.6s ease forwards;
+        }
+
+        @keyframes fadeInSparkline {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .sparkline polyline {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: drawLine 1.5s ease forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Trend Arrow Animation */
+        .trend-arrow {
+            animation: arrowBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Animated Gradient Border for Add New Card */
+        .add-new-card-wrapper {
+            position: relative;
+        }
+
+        .add-new-gradient-border {
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #4facfe, #667eea);
+            background-size: 300% 300%;
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: gradientRotate 6s linear infinite;
+            z-index: -1;
+        }
+
+        .add-new-card-wrapper:hover .add-new-gradient-border {
+            opacity: 0.6;
+        }
+
+        @keyframes gradientRotate {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Add New Icon Rotation */
+        .add-new-icon:hover i {
+            animation: rotateIcon 0.3s ease;
+        }
+
+        @keyframes rotateIcon {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Remove overly flashy glow effects */
+        .card-glow {
+            display: none;
+        }
+
+        /* Premium Card Hover - REFINED */
+        .card-premium {
+            animation: cardFloat 4s ease-in-out infinite;
+        }
+
+        .card-premium:hover {
+            transform: translateY(-6px) rotateX(2deg);
+            box-shadow: 
+                0 12px 32px rgba(79, 172, 254, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
+            animation: none;
+        }
+
+        /* Stat Card Sparkle Effect - SUBTLE */
+        .stat-sparkle {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            animation: sparkleSubtle 4s ease-in-out infinite;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        @keyframes sparkleSubtle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Drop Shadow Glow - REFINED */
+        .drop-shadow-glow {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Stat Card Premium - SUBTLE GLOW */
+        .stat-card-premium {
+            animation: none;
+            box-shadow: 
+                0 4px 16px rgba(150, 230, 161, 0.25), 
+                0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+        }
+
+        .stat-card-premium:hover {
+            box-shadow: 
+                0 8px 24px rgba(150, 230, 161, 0.35), 
+                0 0 20px rgba(212, 252, 121, 0.15), 
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .currency-card:first-child {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Shimmer Effect for Loading */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Number Count Animation */
+        .stat-card .text-3xl,
+        .currency-card .text-2xl {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .text-3xl,
+        .currency-card:hover .text-2xl {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Trend Arrow Animation */
+        @keyframes arrowBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .fa-arrow-up,
+        .fa-arrow-down {
+            animation: arrowBounce 1.5s ease-in-out infinite;
+        }
+
+        /* Card Gradient Glow */
+        .currency-card:first-child::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 200%;
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .currency-card:first-child:hover::after {
+            opacity: 0.3;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Notification Badge Pulse */
+        .notification-badge {
+            animation: pulse 2s infinite, glowPulseSmall 2s infinite;
+        }
+
+        @keyframes glowPulseSmall {
+            0%, 100% {
+                box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+            }
+        }
+
+        /* Smooth Transitions for All Interactive Elements */
+        button, .sidebar-item, .currency-card, .stat-card, .transaction-item, .chart-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Enhanced Focus States */
+        button:focus,
+        .sidebar-item:focus {
+            outline: 2px solid rgba(102, 126, 234, 0.5);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <script src="assets/js/auth.js"></script>
+    <script>requireAuth();</script>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <i class="fas fa-chart-line text-accent-blue"></i>
+                <span>FOREX</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="sidebar-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='forecast.html'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='converter.html'">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Converter</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='news.html'">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='geo-alerts.html'">
+                    <i class="fas fa-globe"></i>
+                    <span>Geo Alerts</span>
+                </div>
+                <div class="sidebar-item" onclick="window.location.href='alerts.html'">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Centre</span>
+                </div>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 2rem;">
+                <div class="sidebar-item">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                    <i class="fas fa-toggle-on ml-auto text-accent-green"></i>
+                </div>
+                <div class="sidebar-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden fixed top-4 left-4 z-50 w-12 h-12 bg-white/10 backdrop-blur-lg rounded-xl flex items-center justify-center" id="mobileMenuBtn">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Header -->
+            <header class="dashboard-header fade-in-up">
+                <div class="welcome-section">
+                    <h1>Welcome Back, Trader 👋</h1>
+                    <p>Here's what's happening in your forex account today.</p>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search text-gray-400"></i>
+                        <input type="text" placeholder="Search currencies...">
+                    </div>
+                    <div class="notification-btn">
+                        <i class="fas fa-bell text-white"></i>
+                        <div class="notification-badge"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- My Cards & Recent Payments Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in-up" style="animation-delay: 0.1s">
+                <!-- My Cards -->
+                <div class="chart-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">My Cards</h3>
+                        <button class="text-gray-400 hover:text-white">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Gradient Card - Blue/Green/Orange - REFINED -->
+                        <div class="card-premium relative rounded-2xl p-6 overflow-hidden cursor-pointer" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 25%, #43e97b 50%, #38f9d7 75%, #ffd89b 100%); min-height: 220px; box-shadow: 0 4px 16px rgba(79, 172, 254, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;">
+                            <!-- Moving light reflection -->
+                            <div class="card-reflection"></div>
+                            
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="text-white/90 text-sm font-semibold tracking-wider">VISA</div>
+                                <i class="fas fa-wifi text-white/70 rotate-90"></i>
+                            </div>
+                            <div class="text-white text-lg font-mono mb-6 tracking-wider drop-shadow-lg">3455 4562 7710 3507</div>
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    <div class="text-white/70 text-xs mb-1">Lusiana</div>
+                                    <div class="text-white/50 text-xs">05/26</div>
+                                </div>
+                                <div class="w-10 h-8 bg-white/20 rounded flex items-center justify-center backdrop-blur-sm">
+                                    <i class="fas fa-credit-card text-white/60 text-sm"></i>
+                                </div>
+                            </div>
+                            <!-- Quick Stats -->
+                            <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/20">
+                                <div>
+                                    <div class="text-white/50 text-xs">Monthly Spend</div>
+                                    <div class="text-white/90 text-sm font-semibold">$2,340</div>
+                                </div>
+                                <div>
+                                    <div class="text-white/50 text-xs">Last Transaction</div>
+                                    <div class="text-white/90 text-sm font-semibold">2h ago</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add New Card - ANIMATED GRADIENT BORDER -->
+                        <div class="add-new-card-wrapper relative rounded-2xl cursor-pointer hover:scale-105 transition-transform" style="min-height: 220px;">
+                            <div class="add-new-gradient-border"></div>
+                            <div class="relative h-full border-2 border-dashed border-gray-600 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-900/50 backdrop-blur-sm hover:border-yellow-400/50 hover:bg-yellow-400/5 transition-all">
+                                <div class="w-12 h-12 rounded-full bg-yellow-400/90 flex items-center justify-center mb-3 hover:bg-yellow-400 transition-all hover:scale-110 add-new-icon" style="box-shadow: 0 4px 16px rgba(250, 204, 21, 0.4);">
+                                    <i class="fas fa-plus text-gray-900 text-xl"></i>
+                                </div>
+                                <div class="text-white text-sm font-semibold">Add New</div>
+                                <div class="text-white text-sm font-semibold">Card</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Payments -->
+                <div class="chart-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">Recent Payments</h3>
+                        <div class="flex gap-2">
+                            <button class="text-gray-400 hover:text-white">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="text-gray-400 hover:text-white">
+                                <i class="fas fa-sliders-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Spotify Payment - Dark Green -->
+                        <div class="relative rounded-xl p-4 overflow-hidden cursor-pointer transition-transform hover:scale-105" style="background: linear-gradient(135deg, #1a5c3a 0%, #2d7a52 100%);">
+                            <div class="flex items-center gap-2 mb-8">
+                                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                                    <i class="fab fa-spotify text-white text-lg"></i>
+                                </div>
+                                <i class="fas fa-arrow-up-right text-white/40 text-xs ml-auto"></i>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);"></div>
+                            </div>
+                            <div class="text-white text-xl font-bold mb-1">$20.36</div>
+                            <div class="text-white/50 text-xs">Spotify</div>
+                        </div>
+
+                        <!-- Dribbble Payment - Dark Pink/Purple -->
+                        <div class="relative rounded-xl p-4 overflow-hidden cursor-pointer transition-transform hover:scale-105" style="background: linear-gradient(135deg, #6b2d5c 0%, #8b3a7a 100%);">
+                            <div class="flex items-center gap-2 mb-8">
+                                <div class="w-10 h-10 rounded-full bg-pink-500 flex items-center justify-center">
+                                    <i class="fab fa-dribbble text-white text-lg"></i>
+                                </div>
+                                <i class="fas fa-arrow-up-right text-white/40 text-xs ml-auto"></i>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);"></div>
+                            </div>
+                            <div class="text-white text-xl font-bold mb-1">$56.10</div>
+                            <div class="text-white/50 text-xs">Dribbble</div>
+                        </div>
+
+                        <!-- Netflix Payment - Dark Red -->
+                        <div class="relative rounded-xl p-4 overflow-hidden cursor-pointer transition-transform hover:scale-105" style="background: linear-gradient(135deg, #7a1f1f 0%, #9a2828 100%);">
+                            <div class="flex items-center gap-2 mb-8">
+                                <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center">
+                                    <i class="fas fa-film text-white text-lg"></i>
+                                </div>
+                                <i class="fas fa-arrow-up-right text-white/40 text-xs ml-auto"></i>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6b6b 100%);"></div>
+                            </div>
+                            <div class="text-white text-xl font-bold mb-1">$20.00</div>
+                            <div class="text-white/50 text-xs">Netflix</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid - Updated Design -->
+            <div class="stats-grid fade-in-up" style="animation-delay: 0.2s">
+                <!-- Balance Card - Yellow/Green Gradient - PREMIUM ENHANCED -->
+                <div class="stat-card stat-card-premium" style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); box-shadow: 0 8px 32px rgba(150, 230, 161, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; position: relative; overflow: hidden;">
+                    <div class="flex items-center justify-between mb-3">
+                        <i class="fas fa-wallet text-gray-800 text-2xl drop-shadow-lg"></i>
+                        <button class="text-gray-800 hover:scale-110 transition-transform">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-700 text-sm mb-2 font-semibold uppercase tracking-wide">Balance</div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 drop-shadow-md" id="totalBalance">$45,230</div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-green-700 text-sm font-semibold flex items-center gap-1">
+                            <i class="fas fa-arrow-up text-xs animate-bounce"></i>
+                            +12.45%
+                        </span>
+                    </div>
+                    <!-- Sparkle effect -->
+                    <div class="stat-sparkle"></div>
+                </div>
+
+                <!-- Income Card - ENHANCED -->
+                <div class="stat-card fade-in-up" style="box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
+                    <div class="flex items-center justify-between mb-3">
+                        <i class="fas fa-arrow-trend-up text-accent-green text-2xl drop-shadow-glow"></i>
+                        <button class="text-gray-400 hover:text-white hover:scale-110 transition-all">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-400 text-sm mb-2 font-semibold uppercase tracking-wide">Income</div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalIncome">$1,423</div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1)); color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);">
+                            <i class="fas fa-arrow-up text-xs mr-1"></i>+24.00 %
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Saving Card - ENHANCED -->
+                <div class="stat-card fade-in-up" style="box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);">
+                    <div class="flex items-center justify-between mb-3">
+                        <i class="fas fa-piggy-bank text-accent-blue text-2xl drop-shadow-glow"></i>
+                        <button class="text-gray-400 hover:text-white hover:scale-110 transition-all">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-400 text-sm mb-2 font-semibold uppercase tracking-wide">Saving</div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalSaving">$89</div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.1)); color: #667eea; box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);">
+                            <i class="fas fa-arrow-up text-xs mr-1"></i>+10.60 %
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Expenses Card - ENHANCED -->
+                <div class="stat-card fade-in-up" style="box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">
+                    <div class="flex items-center justify-between mb-3">
+                        <i class="fas fa-arrow-trend-down text-red-400 text-2xl drop-shadow-glow"></i>
+                        <button class="text-gray-400 hover:text-white hover:scale-110 transition-all">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                    <div class="text-gray-400 text-sm mb-2 font-semibold uppercase tracking-wide">Expenses</div>
+                    <div class="text-3xl font-bold text-white mb-2" id="totalExpenses">$1,423</div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1)); color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);">
+                            <i class="fas fa-arrow-down text-xs mr-1"></i>-08.00 %
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Currency Accounts -->
+            <div class="fade-in-up" style="animation-delay: 0.2s">
+                <h2 class="text-2xl font-bold text-white mb-4">My Currency Accounts</h2>
+                <div class="currency-cards-grid">
+                    <div class="currency-card fade-in-up">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇺🇸</span>
+                            <span class="text-sm text-gray-400">USD</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">$45,230.50</div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-accent-green text-sm font-semibold">+5.2%</span>
+                            <i class="fas fa-arrow-up text-accent-green text-xs trend-arrow"></i>
+                        </div>
+                        <!-- Mini Sparkline -->
+                        <svg class="sparkline" width="100%" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <polyline points="0,20 20,15 40,18 60,10 80,12 100,8" fill="none" stroke="rgba(16, 185, 129, 0.5)" stroke-width="2"/>
+                            <polyline points="0,30 0,20 20,15 40,18 60,10 80,12 100,8 100,30" fill="url(#sparkGradient)" opacity="0.3"/>
+                            <defs>
+                                <linearGradient id="sparkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:rgb(16, 185, 129);stop-opacity:0.5" />
+                                    <stop offset="100%" style="stop-color:rgb(16, 185, 129);stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <div class="currency-card fade-in-up">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇪🇺</span>
+                            <span class="text-sm text-gray-400">EUR</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">€32,450.00</div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-accent-green text-sm font-semibold">+3.8%</span>
+                            <i class="fas fa-arrow-up text-accent-green text-xs trend-arrow"></i>
+                        </div>
+                        <!-- Mini Sparkline -->
+                        <svg class="sparkline" width="100%" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <polyline points="0,18 20,16 40,14 60,12 80,15 100,10" fill="none" stroke="rgba(16, 185, 129, 0.5)" stroke-width="2"/>
+                            <polyline points="0,30 0,18 20,16 40,14 60,12 80,15 100,10 100,30" fill="url(#sparkGradient)" opacity="0.3"/>
+                        </svg>
+                    </div>
+
+                    <div class="currency-card fade-in-up">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">🇮🇳</span>
+                            <span class="text-sm text-gray-400">INR</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">₹1,25,000</div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-red-400 text-sm font-semibold">-1.2%</span>
+                            <i class="fas fa-arrow-down text-red-400 text-xs trend-arrow"></i>
+                        </div>
+                        <!-- Mini Sparkline -->
+                        <svg class="sparkline" width="100%" height="30" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <polyline points="0,10 20,12 40,15 60,18 80,20 100,22" fill="none" stroke="rgba(239, 68, 68, 0.5)" stroke-width="2"/>
+                            <polyline points="0,30 0,10 20,12 40,15 60,18 80,20 100,22 100,30" fill="url(#sparkGradientRed)" opacity="0.3"/>
+                            <defs>
+                                <linearGradient id="sparkGradientRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:rgb(239, 68, 68);stop-opacity:0.5" />
+                                    <stop offset="100%" style="stop-color:rgb(239, 68, 68);stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                            <span class="text-sm text-gray-400">INR</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white mb-2">₹1,25,000</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-400 text-sm">-1.2%</span>
+                            <i class="fas fa-arrow-down text-red-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="currency-card add-new">
+                        <div class="text-center">
+                            <i class="fas fa-plus text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-400">Add New Account</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart and Transactions Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in-up" style="animation-delay: 0.3s">
+                <!-- Chart -->
+                <div class="lg:col-span-2 chart-card">
+                    <h3 class="text-xl font-bold text-white mb-4">Forex Analytics</h3>
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="chart-card">
+                    <h3 class="text-xl font-bold text-white mb-4">Recent Transactions</h3>
+                    <div>
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">USD → EUR</div>
+                                <div class="text-gray-400 text-sm">Today, 10:30 AM</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">$1,250</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">EUR → GBP</div>
+                                <div class="text-gray-400 text-sm">Yesterday, 3:15 PM</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">€850</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">GBP → USD</div>
+                                <div class="text-gray-400 text-sm">2 days ago</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">£500</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-400">Pending</span>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item">
+                            <div>
+                                <div class="text-white font-semibold">INR → USD</div>
+                                <div class="text-gray-400 text-sm">3 days ago</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-white font-semibold">₹50,000</div>
+                                <span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chatbot -->
+    <script src="assets/js/chatbot.js"></script>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-visible');
+            });
+        }
+
+        // Animate numbers counting up
+        function animateValue(id, start, end, duration, prefix = '', suffix = '') {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, 16);
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateValue('totalBalance', 0, 45230, 2000, '$');
+            animateValue('totalProfit', 0, 8450, 2000, '$');
+            animateValue('totalLoss', 0, 1250, 2000, '$');
+            animateValue('monthlyGrowth', 0, 15.3, 2000, '', '%');
+        });
+
+        // Chart.js Analytics
+        const ctx = document.getElementById('analyticsChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Deposits',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        backgroundColor: 'rgba(102, 126, 234, 0.5)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }, {
+                        label: 'Withdrawals',
+                        data: [8000, 12000, 10000, 15000, 18000, 20000],
+                        backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

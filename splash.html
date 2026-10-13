@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForexCast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #0a0e1a;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+        
+        .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .forex {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: fadeZoom 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
+                       glow 3s ease-in-out infinite;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        @keyframes fadeZoom {
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(102, 126, 234, 0.5),
+                             0 0 40px rgba(102, 126, 234, 0.3),
+                             0 0 60px rgba(102, 126, 234, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(102, 126, 234, 0.8),
+                             0 0 60px rgba(102, 126, 234, 0.5),
+                             0 0 90px rgba(102, 126, 234, 0.3);
+            }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        .hint {
+            position: absolute;
+            bottom: 5%;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            animation: fadeIn 1s ease-out 2s forwards, pulse 2s ease-in-out 3s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .forex.slide-up {
+            animation: slideUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        @keyframes slideUp {
+            to { opacity: 0; transform: translateY(-100px) scale(0.9); }
+        }
+        
+        .splash.fade-out {
+            animation: fadeOut 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; transform: scale(1.1); }
+        }
+        
+        @media (max-width: 768px) {
+            .forex { font-size: clamp(3rem, 12vw, 8rem); }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash" id="splash">
+        <h1 class="forex" id="forex">FOREX</h1>
+        <div id="particles"></div>
+    </div>
+
+    <script>
+        const DURATION = 3000;
+        const REDIRECT = 'index.html';
+        let done = false;
+        
+        // Create particles
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (10 + Math.random() * 20) + 's';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            const size = 1 + Math.random() * 3;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.opacity = 0.2 + Math.random() * 0.5;
+            container.appendChild(p);
+        }
+        
+        // Transition
+        function go() {
+            if (done) return;
+            done = true;
+            document.getElementById('forex').classList.add('slide-up');
+            setTimeout(() => {
+                document.getElementById('splash').classList.add('fade-out');
+            }, 400);
+            setTimeout(() => {
+                window.location.href = REDIRECT;
+            }, 1200);
+        }
+        
+        // Auto redirect
+        setTimeout(go, DURATION);
+        
+        // Click to skip
+        document.getElementById('splash').addEventListener('click', go);
+        
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                go();
+            }
+        });
+        
+        // Preload
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = REDIRECT;
+        document.head.appendChild(link);
+    </script>
+</body>
+</html>
